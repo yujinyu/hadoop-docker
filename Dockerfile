@@ -29,8 +29,9 @@ ENV JAVA_HOME /usr/java/default
 ENV PATH $PATH:$JAVA_HOME/bin
 
 # hadoop
-RUN wget http://192.168.6.155/hadoop/common/hadoop-2.4.0/hadoop-2.4.0.tar.gz && tar -xvf hadoop-2.4.0.tar.gz && \
-    mv hadoop-2.4.0 /usr/local/hadoop && rm -rf hadoop-2.4.0.tar.gz &&
+RUN wget http://192.168.6.155/hadoop/common/hadoop-2.4.0/hadoop-2.4.0.tar.gz
+RUN tar -xvf hadoop-2.4.0.tar.gz
+RUN mv hadoop-2.4.0 /usr/local/hadoop && rm -rf hadoop-2.4.0.tar.gz
 
 ENV HADOOP_PREFIX /usr/local/hadoop
 ENV HADOOP_COMMON_HOME /usr/local/hadoop
