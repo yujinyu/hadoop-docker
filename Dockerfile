@@ -30,8 +30,7 @@ ENV PATH $PATH:$JAVA_HOME/bin
 
 # hadoop
 RUN wget http://192.168.6.155/hadoop/common/hadoop-2.4.0/hadoop-2.4.0.tar.gz
-RUN tar -xvf hadoop-2.4.0.tar.gz
-RUN mv hadoop-2.4.0 /usr/local/hadoop && rm -rf hadoop-2.4.0.tar.gz
+RUN tar -xvf hadoop-2.4.0.tar.gz && mv hadoop-2.4.0 /usr/local/hadoop && rm -rf hadoop-2.4.0.tar.gz
 
 ENV HADOOP_PREFIX /usr/local/hadoop
 ENV HADOOP_COMMON_HOME /usr/local/hadoop
@@ -70,9 +69,7 @@ RUN chmod 700 /etc/bootstrap.sh
 ENV BOOTSTRAP /etc/bootstrap.sh
 
 # workingaround docker.io build error
-RUN ls -la /usr/local/hadoop/etc/hadoop/*-env.sh
 RUN chmod +x /usr/local/hadoop/etc/hadoop/*-env.sh
-RUN ls -la /usr/local/hadoop/etc/hadoop/*-env.sh
 
 # fix the 254 error code
 RUN sed  -i "/^[^#]*UsePAM/ s/.*/#&/"  /etc/ssh/sshd_config
