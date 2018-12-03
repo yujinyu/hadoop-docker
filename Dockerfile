@@ -6,7 +6,11 @@ MAINTAINER yujinyu
 USER root
 
 # install dev tools
-RUN yum install -y curl which tar sudo openssh-server openssh-clients rsync
+RUN yum clean all; \
+    rpm --rebuilddb; \
+    yum install -y wget curl which tar sudo openssh-server openssh-clients rsync;\
+    yum update -y libselinux; \
+    yum clean all
 
 # passwordless ssh
 RUN ssh-keygen -q -N "" -t dsa -f /etc/ssh/ssh_host_dsa_key
