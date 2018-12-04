@@ -63,7 +63,7 @@ ADD Configs/hdfs-site.xml $HADOOP_PREFIX/etc/hadoop/hdfs-site.xml
 ADD Configs/mapred-site.xml $HADOOP_PREFIX/etc/hadoop/mapred-site.xml
 ADD Configs/yarn-site.xml $HADOOP_PREFIX/etc/hadoop/yarn-site.xml
 
-RUN RUN sed -i s/HOSTNAME/$HOSTNAME/ /usr/local/hadoop/etc/hadoop/core-site.xml && \
+RUN sed -i s/HOSTNAME/$HOSTNAME/ /usr/local/hadoop/etc/hadoop/core-site.xml && \
     $HADOOP_PREFIX/bin/hdfs namenode -format
 
 ADD Configs/bootstrap.sh /etc/bootstrap.sh
