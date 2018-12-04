@@ -10,7 +10,7 @@ rm /tmp/*.pid
 cd $HADOOP_PREFIX/share/hadoop/common ; for cp in ${ACP//,/ }; do  echo == $cp; curl -LO $cp ; done; cd -
 
 # altering the core-site configuration
-sed -i s/HOSTNAME/$HOSTNAME/ /usr/local/hadoop/etc/hadoop/core-site.xml
+sed -i 's/HOSTNAME/${HOSTNAME}/g' /usr/local/hadoop/etc/hadoop/core-site.xml
 
 service sshd start
 $HADOOP_PREFIX/bin/hdfs namenode -format
