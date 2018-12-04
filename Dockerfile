@@ -31,7 +31,7 @@ ENV PATH $PATH:$JAVA_HOME/bin
 RUN wget http://192.168.6.155/hadoop/common/hadoop-3.1.1/hadoop-3.1.1.tar.gz
 RUN tar -xvf hadoop-3.1.1.tar.gz && mv hadoop-3.1.1 /usr/local/hadoop && rm -rf hadoop-3.1.1.tar.gz
 
-ENV HADOOP_HOME /usr/local/hadoop
+ENV HADOOP_PREFIX /usr/local/hadoop
 ENV HADOOP_COMMON_HOME /usr/local/hadoop
 ENV HADOOP_HDFS_HOME /usr/local/hadoop
 ENV HADOOP_MAPRED_HOME /usr/local/hadoop
@@ -42,10 +42,10 @@ RUN sed -i '/^export JAVA_HOME/ s:.*:export JAVA_HOME=/usr/lib/jvm/java-8-openjd
 RUN sed -i '/^export HADOOP_CONF_DIR/ s:.*:export HADOOP_CONF_DIR=/usr/local/hadoop/etc/hadoop/:' $HADOOP_HOME/etc/hadoop/hadoop-env.sh
 
 # pseudo distributed
-ADD Configs/core-site.xml.temple $HADOOP_HOME/etc/hadoop/core-site.xml.temple
-ADD Configs/hdfs-site.xml $HADOOP_HOME/etc/hadoop/hdfs-site.xml
-ADD Configs/mapred-site.xml $HADOOP_HOME/etc/hadoop/mapred-site.xml
-ADD Configs/yarn-site.xml $HADOOP_HOME/etc/hadoop/yarn-site.xml
+ADD Configs/core-site.xml.temple $HADOOP_PREFIX/etc/hadoop/core-site.xml.temple
+ADD Configs/hdfs-site.xml $HADOOP_PREFIX/etc/hadoop/hdfs-site.xml
+ADD Configs/mapred-site.xml $HADOOP_PREFIX/etc/hadoop/mapred-site.xml
+ADD Configs/yarn-site.xml $HADOOP_PREFIX/etc/hadoop/yarn-site.xml
 
 ADD Configs/bootstrap.sh /etc/bootstrap.sh
 RUN chown root:root /etc/bootstrap.sh && chmod 700 /etc/bootstrap.sh
