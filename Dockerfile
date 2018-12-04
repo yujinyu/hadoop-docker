@@ -57,7 +57,7 @@ RUN mkdir $HADOOP_PREFIX/input
 RUN cp $HADOOP_PREFIX/etc/hadoop/*.xml $HADOOP_PREFIX/input
 
 # pseudo distributed
-ADD Configs/core-site.xml $HADOOP_PREFIX/etc/hadoop/core-site.xml
+ADD Configs/core-site.xml.temple $HADOOP_PREFIX/etc/hadoop/core-site.xml.temple
 #ADD Configs/core-site.xml $HADOOP_PREFIX/etc/hadoop/core-site.xml
 ADD Configs/hdfs-site.xml $HADOOP_PREFIX/etc/hadoop/hdfs-site.xml
 ADD Configs/mapred-site.xml $HADOOP_PREFIX/etc/hadoop/mapred-site.xml
@@ -74,7 +74,7 @@ ENV BOOTSTRAP /etc/bootstrap.sh
 RUN chmod +x /usr/local/hadoop/etc/hadoop/*-env.sh
 
 #RUN service sshd start && $HADOOP_PREFIX/etc/hadoop/hadoop-env.sh && \
-#    sed -i s/HOSTNAME/$HOSTNAME/ /usr/local/hadoop/etc/hadoop/core-site.xml && \
+#    sed s/HOSTNAME/$HOSTNAME/ /usr/local/hadoop/etc/hadoop/core-site.xml.temple > /usr/local/hadoop/etc/hadoop/core-site.xml&& \
 #    $HADOOP_PREFIX/bin/hdfs namenode -format && \
 #    $HADOOP_PREFIX/sbin/start-dfs.sh && \
 #    $HADOOP_PREFIX/bin/hdfs dfs -mkdir -p /user/root && \
