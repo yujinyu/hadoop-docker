@@ -63,8 +63,6 @@ ADD Configs/hdfs-site.xml $HADOOP_PREFIX/etc/hadoop/hdfs-site.xml
 ADD Configs/mapred-site.xml $HADOOP_PREFIX/etc/hadoop/mapred-site.xml
 ADD Configs/yarn-site.xml $HADOOP_PREFIX/etc/hadoop/yarn-site.xml
 
-RUN sed -i s/HOSTNAME/$HOSTNAME/ /usr/local/hadoop/etc/hadoop/core-site.xml && \
-    $HADOOP_PREFIX/bin/hdfs namenode -format
 
 ADD Configs/bootstrap.sh /etc/bootstrap.sh
 RUN chown root:root /etc/bootstrap.sh
@@ -77,10 +75,10 @@ RUN chmod +x /usr/local/hadoop/etc/hadoop/*-env.sh
 
 RUN service sshd start && $HADOOP_PREFIX/etc/hadoop/hadoop-env.sh && \
     sed -i s/HOSTNAME/$HOSTNAME/ /usr/local/hadoop/etc/hadoop/core-site.xml && \
-    $HADOOP_PREFIX/sbin/start-dfs.sh && $HADOOP_PREFIX/bin/hdfs dfs -mkdir -p /user/root
-RUN service sshd start && $HADOOP_PREFIX/etc/hadoop/hadoop-env.sh && \
-    sed -i s/HOSTNAME/$HOSTNAME/ /usr/local/hadoop/etc/hadoop/core-site.xml && \
-    $HADOOP_PREFIX/sbin/start-dfs.sh && $HADOOP_PREFIX/bin/hdfs dfs -put $HADOOP_PREFIX/etc/hadoop/ input
+    $HADOOP_PREFIX/bin/hdfs namenode -format && \
+    $HADOOP_PREFIX/sbin/start-dfs.sh && \
+    $HADOOP_PREFIX/bin/hdfs dfs -mkdir -p /user/root && \
+    $HADOOP_PREFIX/bin/hdfs dfs -put $HADOOP_PREFIX/etc/hadoop/ input
 
 CMD ["/etc/bootstrap.sh", "-d"]
 
