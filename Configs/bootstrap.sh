@@ -10,11 +10,10 @@ rm /tmp/*.pid
 cd $HADOOP_HOME/share/hadoop/common ; for cp in ${ACP//,/ }; do  echo == $cp; curl -LO $cp ; done; cd -
 
 # altering the core-site configuration
-#HOST_IP=`ifconfig -a|grep inet|grep -v 127.0.0.1|grep -v inet6|awk '{print $2}'|tr -d "addr:"`
-#sed s/localhost/$HOST_IP/ /usr/local/hadoop/etc/hadoop/core-site.xml.template > /usr/local/hadoop/etc/hadoop/core-site.xml
-#sed s/localhost/$HOST_IP/ $HADOOP_HOME/etc/hadoop/workers.template > $HADOOP_HOME/etc/hadoop/workers
+sed s/HOSTNAME/$HOSTNAME/ /usr/local/hadoop/etc/hadoop/core-site.xml.temple > /usr/local/hadoop/etc/hadoop/core-site.xml
 
 service ssh start
+$HADOOP_HOME/bin/hdfs namenode -format
 $HADOOP_HOME/sbin/start-dfs.sh
 $HADOOP_HOME/sbin/start-yarn.sh
 $HADOOP_HOME/bin/mapred --daemon start historyserver
