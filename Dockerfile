@@ -78,12 +78,11 @@ RUN service sshd start && $HADOOP_PREFIX/etc/hadoop/hadoop-env.sh && $HADOOP_PRE
 
 CMD ["/etc/bootstrap.sh", "-d"]
 
-#EXPOSE           49707 22
 # Hdfs ports
 EXPOSE 50010 50020 50070 50075 50090
-#EXPOSE 8020 9000
+EXPOSE 8020 9000
 # Mapred ports
-#EXPOSE 19888
+EXPOSE 19888
 #Yarn ports
 EXPOSE 8030 8031 8032 8033 8040 8042 8088
 #Other ports
