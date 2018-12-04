@@ -35,8 +35,8 @@ ENV JAVA_HOME /usr/java/default
 ENV PATH $PATH:$JAVA_HOME/bin
 
 # hadoop
-RUN wget http://192.168.6.155/hadoop/common/hadoop-2.7.1/hadoop-2.7.1.tar.gz
-RUN tar -xvf hadoop-2.7.1.tar.gz && mv hadoop-2.7.1 /usr/local/hadoop && rm -rf hadoop-2.7.1.tar.gz
+RUN wget http://192.168.6.155/hadoop/common/hadoop-2.7.7/hadoop-2.7.7.tar.gz
+RUN tar -xvf hadoop-2.7.7.tar.gz && mv hadoop-2.7.7 /usr/local/hadoop && rm -rf hadoop-2.7.7.tar.gz
 
 #RUN rm -rf  /usr/local/hadoop/lib/native/* && cd /usr/local/hadoop/lib/native/ && \
 #	wget https://github.com/sequenceiq/docker-hadoop-build/releases/download/v2.7.1/hadoop-native-64-2.7.1.tgz &&\
