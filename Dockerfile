@@ -73,13 +73,6 @@ ENV BOOTSTRAP /etc/bootstrap.sh
 # workingaround docker.io build error
 RUN chmod +x /usr/local/hadoop/etc/hadoop/*-env.sh
 
-#RUN service sshd start && $HADOOP_PREFIX/etc/hadoop/hadoop-env.sh && \
-#    sed s/HOSTNAME/$HOSTNAME/ /usr/local/hadoop/etc/hadoop/core-site.xml.temple > /usr/local/hadoop/etc/hadoop/core-site.xml&& \
-#    $HADOOP_PREFIX/bin/hdfs namenode -format && \
-#    $HADOOP_PREFIX/sbin/start-dfs.sh && \
-#    $HADOOP_PREFIX/bin/hdfs dfs -mkdir -p /user/root && \
-#    $HADOOP_PREFIX/bin/hdfs dfs -put $HADOOP_PREFIX/etc/hadoop/ input
-
 CMD ["/etc/bootstrap.sh", "-d"]
 
 # Hdfs ports
