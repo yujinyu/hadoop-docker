@@ -38,9 +38,9 @@ ENV PATH $PATH:$JAVA_HOME/bin
 RUN wget http://192.168.6.155/hadoop/common/hadoop-2.7.1/hadoop-2.7.1.tar.gz
 RUN tar -xvf hadoop-2.7.1.tar.gz && mv hadoop-2.7.1 /usr/local/hadoop && rm -rf hadoop-2.7.1.tar.gz
 
-RUN rm -rf  /usr/local/hadoop/lib/native/* && cd /usr/local/hadoop/lib/native/ && \
-	wget https://github.com/sequenceiq/docker-hadoop-build/releases/download/v2.7.1/hadoop-native-64-2.7.1.tgz &&\
-	tar -xvf hadoop-native-64-2.7.1.tgz && rm -rf hadoop-native-64-2.7.1.tgz
+#RUN rm -rf  /usr/local/hadoop/lib/native/* && cd /usr/local/hadoop/lib/native/ && \
+#	wget https://github.com/sequenceiq/docker-hadoop-build/releases/download/v2.7.1/hadoop-native-64-2.7.1.tgz &&\
+#	tar -xvf hadoop-native-64-2.7.1.tgz && rm -rf hadoop-native-64-2.7.1.tgz
 
 ENV HADOOP_PREFIX /usr/local/hadoop
 ENV HADOOP_COMMON_HOME /usr/local/hadoop
@@ -57,6 +57,8 @@ RUN mkdir $HADOOP_PREFIX/input
 RUN cp $HADOOP_PREFIX/etc/hadoop/*.xml $HADOOP_PREFIX/input
 
 # pseudo distributed
+#ADD Configs/core-site.xml.template $HADOOP_PREFIX/etc/hadoop/core-site.xml.template
+#RUN sed s/localhost/localhost/ /usr/local/hadoop/etc/hadoop/core-site.xml.template > /usr/local/hadoop/etc/hadoop/core-site.xml
 ADD Configs/core-site.xml $HADOOP_PREFIX/etc/hadoop/core-site.xml
 ADD Configs/hdfs-site.xml $HADOOP_PREFIX/etc/hadoop/hdfs-site.xml
 ADD Configs/mapred-site.xml $HADOOP_PREFIX/etc/hadoop/mapred-site.xml
@@ -79,8 +81,7 @@ RUN service sshd start && $HADOOP_PREFIX/etc/hadoop/hadoop-env.sh && $HADOOP_PRE
 CMD ["/etc/bootstrap.sh", "-d"]
 
 # Hdfs ports
-EXPOSE 50010 50020 50070 50075 50090
-EXPOSE 8020 9000
+EXPOSE 50010 50020 50070 50075 50090 8020 9000
 # Mapred ports
 EXPOSE 19888
 #Yarn ports
