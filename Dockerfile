@@ -57,14 +57,14 @@ RUN mkdir $HADOOP_PREFIX/input
 RUN cp $HADOOP_PREFIX/etc/hadoop/*.xml $HADOOP_PREFIX/input
 
 # pseudo distributed
-ADD Configs/core-site.xml.template $HADOOP_PREFIX/etc/hadoop/core-site.xml.template
-RUN sed s/HOSTNAME/$HOSTNAME/ /usr/local/hadoop/etc/hadoop/core-site.xml.template > /usr/local/hadoop/etc/hadoop/core-site.xml
+ADD Configs/core-site.xml $HADOOP_PREFIX/etc/hadoop/core-site.xml
 #ADD Configs/core-site.xml $HADOOP_PREFIX/etc/hadoop/core-site.xml
 ADD Configs/hdfs-site.xml $HADOOP_PREFIX/etc/hadoop/hdfs-site.xml
 ADD Configs/mapred-site.xml $HADOOP_PREFIX/etc/hadoop/mapred-site.xml
 ADD Configs/yarn-site.xml $HADOOP_PREFIX/etc/hadoop/yarn-site.xml
 
-RUN $HADOOP_PREFIX/bin/hdfs namenode -format
+RUN RUN sed -i s/HOSTNAME/$HOSTNAME/ /usr/local/hadoop/etc/hadoop/core-site.xml && \
+    $HADOOP_PREFIX/bin/hdfs namenode -format
 
 ADD Configs/bootstrap.sh /etc/bootstrap.sh
 RUN chown root:root /etc/bootstrap.sh
@@ -75,8 +75,12 @@ ENV BOOTSTRAP /etc/bootstrap.sh
 # workingaround docker.io build error
 RUN chmod +x /usr/local/hadoop/etc/hadoop/*-env.sh
 
-RUN service sshd start && $HADOOP_PREFIX/etc/hadoop/hadoop-env.sh && $HADOOP_PREFIX/sbin/start-dfs.sh && $HADOOP_PREFIX/bin/hdfs dfs -mkdir -p /user/root
-RUN service sshd start && $HADOOP_PREFIX/etc/hadoop/hadoop-env.sh && $HADOOP_PREFIX/sbin/start-dfs.sh && $HADOOP_PREFIX/bin/hdfs dfs -put $HADOOP_PREFIX/etc/hadoop/ input
+RUN service sshd start && $HADOOP_PREFIX/etc/hadoop/hadoop-env.sh && \
+    sed -i s/HOSTNAME/$HOSTNAME/ /usr/local/hadoop/etc/hadoop/core-site.xml && \
+    $HADOOP_PREFIX/sbin/start-dfs.sh && $HADOOP_PREFIX/bin/hdfs dfs -mkdir -p /user/root
+RUN service sshd start && $HADOOP_PREFIX/etc/hadoop/hadoop-env.sh && \
+    sed -i s/HOSTNAME/$HOSTNAME/ /usr/local/hadoop/etc/hadoop/core-site.xml && \
+    $HADOOP_PREFIX/sbin/start-dfs.sh && $HADOOP_PREFIX/bin/hdfs dfs -put $HADOOP_PREFIX/etc/hadoop/ input
 
 CMD ["/etc/bootstrap.sh", "-d"]
 
