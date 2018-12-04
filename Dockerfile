@@ -5,7 +5,7 @@ USER root
 
 # install dev tools
 RUN apt-get update && \
-    apt-get install -y curl wget tar git openssh-server openssh-client openjdk-8-jdk && \
+    apt-get install -y wget tar openssh-server openssh-client && \
     apt-get autoremove -y && \
     apt-get clean all
 
