@@ -31,6 +31,7 @@ ENV PATH $PATH:$JAVA_HOME/bin
 RUN wget http://192.168.6.193/hadoop/common/hadoop-3.1.1/hadoop-3.1.1.tar.gz
 RUN tar -xvf hadoop-3.1.1.tar.gz && mv hadoop-3.1.1 /usr/local/hadoop && rm -rf hadoop-3.1.1.tar.gz
 
+ENV HADOOP_HOME /usr/local/hadoop
 ENV HADOOP_PREFIX /usr/local/hadoop
 ENV HADOOP_COMMON_HOME /usr/local/hadoop
 ENV HADOOP_HDFS_HOME /usr/local/hadoop
