@@ -16,7 +16,7 @@ service ssh start
 $HADOOP_PREFIX/bin/hdfs namenode -format
 $HADOOP_PREFIX/sbin/start-dfs.sh
 $HADOOP_PREFIX/sbin/start-yarn.sh
-#$HADOOP_PREFIX/bin/mapred --daemon start historyserver
+$HADOOP_PREFIX/bin/mapred --daemon start historyserver
 
 if [[ $1 == "-d" ]]; then
   while true; do sleep 1000; done
