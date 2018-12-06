@@ -35,7 +35,7 @@ ENV JAVA_HOME /usr/java/default
 ENV PATH $PATH:$JAVA_HOME/bin
 
 # hadoop
-RUN wget http://192.168.6.155/hadoop/common/hadoop-2.7.1/hadoop-2.7.1.tar.gz
+RUN wget https://archive.apache.org/dist/hadoop/common/hadoop-2.7.1/hadoop-2.7.1.tar.gz
 RUN tar -xvf hadoop-2.7.1.tar.gz && mv hadoop-2.7.1 /usr/local/hadoop && rm -rf hadoop-2.7.1.tar.gz
 
 #RUN rm -rf  /usr/local/hadoop/lib/native/* && cd /usr/local/hadoop/lib/native/ && \
