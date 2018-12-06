@@ -28,7 +28,7 @@ ENV JAVA_HOME /usr/local/java
 ENV PATH $PATH:$JAVA_HOME/bin
 
 # install and configure hadoop
-RUN wget http://192.168.6.193/hadoop/common/hadoop-3.1.1/hadoop-3.1.1.tar.gz
+RUN wget https://archive.apache.org/dist/hadoop/common/hadoop-3.1.1/hadoop-3.1.1.tar.gz
 RUN tar -xvf hadoop-3.1.1.tar.gz && mv hadoop-3.1.1 /usr/local/hadoop && rm -rf hadoop-3.1.1.tar.gz
 
 ENV HADOOP_HOME /usr/local/hadoop
