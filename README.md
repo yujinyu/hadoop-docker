@@ -1,5 +1,5 @@
 # Docker Image Info:  
-- OS Version: Ubuntu 16.04   
+- OS Version: CentOS 6.5   
 - Java Version: IBM SDK8.0    
 - Hadoop Version: 2.8.5
 
