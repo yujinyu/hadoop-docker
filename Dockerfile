@@ -25,7 +25,7 @@ RUN sed  -i "/^[^#]*UsePAM/ s/.*/#&/"  /etc/ssh/sshd_config && \
     echo "Port 2122" >> /etc/ssh/sshd_config
 
 # get and configure hadoop
-RUN wget http://mirrors.hust.edu.cn/apache/hadoop/common/hadoop-2.8.5/hadoop-2.8.5.tar.gz && \
+RUN wget https://archive.apache.org/dist/hadoop/common/hadoop-2.8.5/hadoop-2.8.5.tar.gz && \
     tar -xvf hadoop-2.8.5.tar.gz && rm hadoop-2.8.5.tar.gz && \
     mv hadoop-2.8.5 /usr/local/hadoop
 
