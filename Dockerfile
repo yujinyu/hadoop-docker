@@ -1,4 +1,4 @@
-FROM yujinyu/ubuntu:ibmsdk8.0
+FROM ubuntu:16.04
 MAINTAINER yujinyu
 
 USER root
@@ -23,7 +23,12 @@ RUN chmod 600 /root/.ssh/config && \
 RUN sed  -i "/^[^#]*UsePAM/ s/.*/#&/"  /etc/ssh/sshd_config && \
     echo "UsePAM no" >> /etc/ssh/sshd_config
 
-
+# install and config java
+RUN wget http://public.dhe.ibm.com/ibmdl/export/pub/systems/cloud/runtimes/java/8.0.5.26/linux/x86_64/ibm-java-x86_64-sdk-8.0-5.26.bin && \
+    chmod +x ibm-java-x86_64-sdk-8.0-5.26.bin
+RUN sh -c '/bin/echo -e "\n4\n1\n\n/usr/java/default\nY\n\n\n" | ./ibm-java-x86_64-sdk-8.0-5.26.bin'
+ENV JAVA_HOME /usr/java/default
+ENV PATH $PATH:$JAVA_HOME/bin
 ENV JAVA_HOME /usr/local/java
 ENV PATH $PATH:$JAVA_HOME/bin
 
