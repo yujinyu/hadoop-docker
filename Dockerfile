@@ -29,8 +29,7 @@ RUN wget http://public.dhe.ibm.com/ibmdl/export/pub/systems/cloud/runtimes/java/
 RUN sh -c '/bin/echo -e "\n4\n1\n\n/usr/java/default\nY\n\n\n" | ./ibm-java-x86_64-sdk-8.0-5.31.bin'
 ENV JAVA_HOME /usr/java/default
 ENV PATH $PATH:$JAVA_HOME/bin
-ENV JAVA_HOME /usr/local/java
-ENV PATH $PATH:$JAVA_HOME/bin
+RUN rm -f ibm-java-x86_64-sdk-8.0-5.31.bin 
 
 # install and configure hadoop
 RUN wget https://archive.apache.org/dist/hadoop/common/hadoop-3.1.2/hadoop-3.1.2.tar.gz
