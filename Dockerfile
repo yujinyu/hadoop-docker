@@ -32,8 +32,8 @@ ENV PATH $PATH:$JAVA_HOME/bin
 RUN rm -f ibm-java-x86_64-sdk-8.0-5.31.bin 
 
 # install and configure hadoop
-RUN wget https://archive.apache.org/dist/hadoop/common/hadoop-3.1.2/hadoop-3.1.2.tar.gz
-RUN tar -xvf hadoop-3.1.2.tar.gz && mv hadoop-3.1.2 /usr/local/hadoop && rm -rf hadoop-3.1.2.tar.gz
+RUN wget https://archive.apache.org/dist/hadoop/common/hadoop-3.1.1/hadoop-3.1.1.tar.gz
+RUN tar -xvf hadoop-3.1.1.tar.gz && mv hadoop-3.1.1 /usr/local/hadoop && rm -rf hadoop-3.1.1.tar.gz
 
 ENV HADOOP_HOME /usr/local/hadoop
 ENV HADOOP_PREFIX /usr/local/hadoop
