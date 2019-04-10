@@ -24,4 +24,16 @@
         <name>yarn.nodemanager.vmem-pmem-ratio</name>
         <value>2</value>
     </property>
+    <property>
+        <name>yarn.nodemanager.opportunistic-containers-max-queue-length</name>
+        <value>10</value>
+    </property>
+    <property>
+        <name>yarn.nodemanager.vmem-pmem-ratio</name>
+        <value>2</value>
+    </property>
+    <property>
+        <name>yarn.nodemanager.distributed-scheduling.enabled</name>
+        <value>true</value>
+    </property>
 </configuration>
