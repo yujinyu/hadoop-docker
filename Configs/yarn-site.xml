@@ -36,4 +36,8 @@
         <name>yarn.nodemanager.distributed-scheduling.enabled</name>
         <value>true</value>
     </property>
+    <property>
+        <name>yarn.resourcemanager.scheduler.address</name>
+        <value>localhost:8049</value>
+    </property>
 </configuration>
