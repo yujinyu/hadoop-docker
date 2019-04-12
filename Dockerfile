@@ -24,12 +24,18 @@ RUN sed  -i "/^[^#]*UsePAM/ s/.*/#&/"  /etc/ssh/sshd_config && \
     echo "UsePAM no" >> /etc/ssh/sshd_config
 
 # install and config java
-RUN wget http://public.dhe.ibm.com/ibmdl/export/pub/systems/cloud/runtimes/java/8.0.5.31/linux/x86_64/ibm-java-x86_64-sdk-8.0-5.31.bin && \
+# A. IBM JDK
+##RUN wget http://public.dhe.ibm.com/ibmdl/export/pub/systems/cloud/runtimes/java/8.0.5.31/linux/x86_64/ibm-java-x86_64-sdk-8.0-5.31.bin && \
     chmod +x ibm-java-x86_64-sdk-8.0-5.31.bin
-RUN sh -c '/bin/echo -e "\n4\n1\n\n/usr/java/default\nY\n\n\n" | ./ibm-java-x86_64-sdk-8.0-5.31.bin'
-ENV JAVA_HOME /usr/java/default
+##RUN sh -c '/bin/echo -e "\n4\n1\n\n/usr/java/default\nY\n\n\n" | ./ibm-java-x86_64-sdk-8.0-5.31.bin'
+##RUN rm -f ibm-java-x86_64-sdk-8.0-5.31.bin 
+##ENV JAVA_HOME /usr/java/default
+
+# B. Open JDK
+RUN apt-get install -y openjdk-8-jdk
+ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64
+
 ENV PATH $PATH:$JAVA_HOME/bin
-RUN rm -f ibm-java-x86_64-sdk-8.0-5.31.bin 
 
 # install and configure hadoop
 RUN wget https://archive.apache.org/dist/hadoop/common/hadoop-3.1.2/hadoop-3.1.2.tar.gz
@@ -43,7 +49,7 @@ ENV HADOOP_MAPRED_HOME /usr/local/hadoop
 ENV HADOOP_YARN_HOME /usr/local/hadoop
 ENV HADOOP_CONF_DIR /usr/local/hadoop/etc/hadoop
 
-RUN sed -i '/^export JAVA_HOME/ s:.*:export JAVA_HOME=/usr/local/java\nexport HADOOP_HOME=/usr/local/hadoop\n:' $HADOOP_PREFIX/etc/hadoop/hadoop-env.sh
+RUN sed -i '/^export JAVA_HOME/ s:.*:export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64\nexport HADOOP_HOME=/usr/local/hadoop\n:' $HADOOP_PREFIX/etc/hadoop/hadoop-env.sh
 RUN sed -i '/^export HADOOP_CONF_DIR/ s:.*:export HADOOP_CONF_DIR=/usr/local/hadoop/etc/hadoop/:' $HADOOP_PREFIX/etc/hadoop/hadoop-env.sh
 
 # pseudo distributed
@@ -51,6 +57,7 @@ ADD Configs/core-site.xml.temple $HADOOP_PREFIX/etc/hadoop/core-site.xml.temple
 ADD Configs/hdfs-site.xml $HADOOP_PREFIX/etc/hadoop/hdfs-site.xml
 ADD Configs/mapred-site.xml $HADOOP_PREFIX/etc/hadoop/mapred-site.xml
 ADD Configs/yarn-site.xml $HADOOP_PREFIX/etc/hadoop/yarn-site.xml
+RUN sed -i "s/hadoop.root.logger=INFO,console/hadoop.root.logger=INFO,console/g" $HADOOP_PREFIX/etc/hadoop/log4j.properties
 
 ADD Configs/bootstrap.sh /etc/bootstrap.sh
 RUN chown root:root /etc/bootstrap.sh && chmod 700 /etc/bootstrap.sh
