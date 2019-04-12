@@ -1,11 +1,10 @@
 FROM ubuntu:16.04
 MAINTAINER yujinyu
-
 USER root
 
 # install dev tools
 RUN apt-get update && \
-    apt-get install -y apt-utils wget tar openssh-server openssh-client && \
+    apt-get install -y wget tar openssh-server openssh-client && \
     apt-get autoremove -y && \
     apt-get clean all
 
@@ -45,15 +44,17 @@ ENV HADOOP_CONF_DIR /usr/local/hadoop/etc/hadoop
 ENV PATH $PATH:$HADOOP_HOME/bin
 
 # JAVA_HOME should be same to the version which has been installed above.
-RUN sed -i '/^export JAVA_HOME/ s:.*:export JAVA_HOME=/usr/java/default\nexport HADOOP_HOME=/usr/local/hadoop\n:' $HADOOP_PREFIX/etc/hadoop/hadoop-env.sh
-RUN sed -i '/^export HADOOP_CONF_DIR/ s:.*:export HADOOP_CONF_DIR=/usr/local/hadoop/etc/hadoop/:' $HADOOP_PREFIX/etc/hadoop/hadoop-env.sh
+RUN echo "export JAVA_HOME=/usr/java/default" >> $HADOOP_PREFIX/etc/hadoop/hadoop-env.sh
+RUN echo "export HADOOP_HOME=/usr/local/hadoop" >> $HADOOP_PREFIX/etc/hadoop/hadoop-env.sh
+RUN echo "export HADOOP_CONF_DIR=/usr/local/hadoop/etc/hadoop/" >> $HADOOP_PREFIX/etc/hadoop/hadoop-env.sh
+RUN echo "export HADOOP_ROOT_LOGGER=DEBUG,console" >> $HADOOP_PREFIX/etc/hadoop/hadoop-env.sh
+RUN echo "export HADOOP_DAEMON_ROOT_LOGGER=DEBUG,RFA" >> $HADOOP_PREFIX/etc/hadoop/hadoop-env.sh
 
 # pseudo distributed
 ADD Configs/core-site.xml.temple $HADOOP_PREFIX/etc/hadoop/core-site.xml.temple
 ADD Configs/hdfs-site.xml $HADOOP_PREFIX/etc/hadoop/hdfs-site.xml
 ADD Configs/mapred-site.xml $HADOOP_PREFIX/etc/hadoop/mapred-site.xml
 ADD Configs/yarn-site.xml $HADOOP_PREFIX/etc/hadoop/yarn-site.xml
-RUN sed -i "s/hadoop.root.logger=INFO,console/hadoop.root.logger=DEBUG,console/g" $HADOOP_PREFIX/etc/hadoop/log4j.properties
 
 ADD Configs/bootstrap.sh /etc/bootstrap.sh
 RUN chown root:root /etc/bootstrap.sh && chmod 700 /etc/bootstrap.sh
