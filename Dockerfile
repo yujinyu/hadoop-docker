@@ -25,8 +25,7 @@ RUN sed  -i "/^[^#]*UsePAM/ s/.*/#&/"  /etc/ssh/sshd_config && \
 
 # install and config java
 # A. IBM JDK
-##RUN wget http://public.dhe.ibm.com/ibmdl/export/pub/systems/cloud/runtimes/java/8.0.5.31/linux/x86_64/ibm-java-x86_64-sdk-8.0-5.31.bin && \
-    chmod +x ibm-java-x86_64-sdk-8.0-5.31.bin
+##RUN wget http://public.dhe.ibm.com/ibmdl/export/pub/systems/cloud/runtimes/java/8.0.5.31/linux/x86_64/ibm-java-x86_64-sdk-8.0-5.31.bin && chmod +x ibm-java-x86_64-sdk-8.0-5.31.bin
 ##RUN sh -c '/bin/echo -e "\n4\n1\n\n/usr/java/default\nY\n\n\n" | ./ibm-java-x86_64-sdk-8.0-5.31.bin'
 ##RUN rm -f ibm-java-x86_64-sdk-8.0-5.31.bin 
 ##ENV JAVA_HOME /usr/java/default
