@@ -3,11 +3,20 @@ MAINTAINER yujinyu
 
 USER root
 
-# install dev tools
+# install development tools
 RUN apt-get update && \
-    apt-get install -y apt-utils wget tar openssh-server openssh-client && \
+    apt-get install -y apt-utils wget tar openssh-server openssh-client \
+	build-essential autoconf automake libtool cmake zlib1g-dev pkg-config \
+	libssl-dev scala maven && \
     apt-get autoremove -y && \
     apt-get clean all
+	
+# install protobuf 2.5.0
+RUN wget https://github.com/google/protobuf/releases/download/v2.5.0/protobuf-2.5.0.tar.gz \
+	&& tar -xvf protobuf-2.5.0.tar.gz && cd protobuf-2.5.0/ \
+	&& ./autogen.sh && ./configure && make && make install
+RUN rm -rf protobuf-2.5.0*
+
 
 # configure ssh --> passwordless ssh
 RUN rm -f /etc/ssh/ssh_host_dsa_key /etc/ssh/ssh_host_rsa_key /root/.ssh/id_rsa && \
@@ -38,8 +47,9 @@ ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64
 ENV PATH $PATH:$JAVA_HOME/bin
 
 # install and configure hadoop
-RUN wget https://archive.apache.org/dist/hadoop/common/hadoop-3.1.2/hadoop-3.1.2.tar.gz
-RUN tar -xvf hadoop-3.1.2.tar.gz && mv hadoop-3.1.2 /usr/local/hadoop && rm -rf hadoop-3.1.2.tar.gz
+RUN wget https://archive.apache.org/dist/hadoop/common/hadoop-3.1.2/hadoop-3.1.2-src.tar.gz
+RUN tar -xvf hadoop-3.1.2-src.tar.gz && cd hadoop-3.1.2-src && mvn package -Pdist,native -DskipTests -Dtar && \
+    cd hadoop-dist/target && mv hadoop-3.1.2 /usr/local/hadoop && cd ../../../ && rm -rf hadoop-3.1.2*
 
 ENV HADOOP_HOME /usr/local/hadoop
 ENV HADOOP_PREFIX /usr/local/hadoop
