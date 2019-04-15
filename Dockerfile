@@ -2,6 +2,9 @@ FROM ubuntu:16.04
 MAINTAINER yujinyu
 USER root
 
+# add hadoop user
+RUN useradd -ms /bin/bash hadoop
+
 # install dev tools
 RUN apt-get update && \
     apt-get install -y wget tar openssh-server openssh-client && \
