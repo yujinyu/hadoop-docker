@@ -3,6 +3,9 @@ MAINTAINER yujinyu
 
 USER root
 
+# add hadoop user
+RUN useradd -ms /bin/bash hadoop
+
 # install development tools
 RUN apt-get update && \
     apt-get install -y apt-utils wget tar openssh-server openssh-client \
