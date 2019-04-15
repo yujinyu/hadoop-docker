@@ -55,15 +55,16 @@ ENV HADOOP_CONF_DIR /usr/local/hadoop/etc/hadoop
 ENV PATH $PATH:$HADOOP_HOME/bin
 
 # JAVA_HOME should be same to the version which has been installed above.
-RUN sed -i '/^export JAVA_HOME/ s:.*:export JAVA_HOME=/usr/java/default\nexport HADOOP_HOME=/usr/local/hadoop\n:' $HADOOP_PREFIX/etc/hadoop/hadoop-env.sh
-RUN sed -i '/^export HADOOP_CONF_DIR/ s:.*:export HADOOP_CONF_DIR=/usr/local/hadoop/etc/hadoop/:' $HADOOP_PREFIX/etc/hadoop/hadoop-env.sh
+RUN echo "export JAVA_HOME=/usr/java/default" >> $HADOOP_PREFIX/etc/hadoop/hadoop-env.sh
+RUN echo "export HADOOP_HOME=/usr/local/hadoop" >> $HADOOP_PREFIX/etc/hadoop/hadoop-env.sh
+RUN echo "export HADOOP_CONF_DIR=/usr/local/hadoop/etc/hadoop/" >> $HADOOP_PREFIX/etc/hadoop/hadoop-env.sh
+RUN echo "export HADOOP_ROOT_LOGGER=DEBUG,console" >> $HADOOP_PREFIX/etc/hadoop/hadoop-env.sh
 
 # pseudo distributed
 ADD Configs/core-site.xml.temple $HADOOP_PREFIX/etc/hadoop/core-site.xml.temple
 ADD Configs/hdfs-site.xml $HADOOP_PREFIX/etc/hadoop/hdfs-site.xml
 ADD Configs/mapred-site.xml $HADOOP_PREFIX/etc/hadoop/mapred-site.xml
 ADD Configs/yarn-site.xml $HADOOP_PREFIX/etc/hadoop/yarn-site.xml
-RUN sed -i "s/hadoop.root.logger=INFO,console/hadoop.root.logger=DEBUG,console/g" $HADOOP_PREFIX/etc/hadoop/log4j.properties
 
 ADD Configs/bootstrap.sh /etc/bootstrap.sh
 RUN chown root:root /etc/bootstrap.sh && chmod 700 /etc/bootstrap.sh
@@ -82,5 +83,3 @@ EXPOSE 8480 8481 8485 9864 9865 9866 9867 9868 9869 9870 9871 50200
 EXPOSE 10020 10033 19888 19890
 # ssh port
 EXPOSE 22
-# other port
-EXPOSE 49707
