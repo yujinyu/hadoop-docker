@@ -48,7 +48,6 @@ RUN echo "export JAVA_HOME=/usr/java/default" >> $HADOOP_PREFIX/etc/hadoop/hadoo
 RUN echo "export HADOOP_HOME=/usr/local/hadoop" >> $HADOOP_PREFIX/etc/hadoop/hadoop-env.sh
 RUN echo "export HADOOP_CONF_DIR=/usr/local/hadoop/etc/hadoop/" >> $HADOOP_PREFIX/etc/hadoop/hadoop-env.sh
 RUN echo "export HADOOP_ROOT_LOGGER=DEBUG,console" >> $HADOOP_PREFIX/etc/hadoop/hadoop-env.sh
-RUN echo "export HADOOP_DAEMON_ROOT_LOGGER=DEBUG,RFA" >> $HADOOP_PREFIX/etc/hadoop/hadoop-env.sh
 
 # pseudo distributed
 ADD Configs/core-site.xml.temple $HADOOP_PREFIX/etc/hadoop/core-site.xml.temple
@@ -73,5 +72,3 @@ EXPOSE 8480 8481 8485 9864 9865 9866 9867 9868 9869 9870 9871 50200
 EXPOSE 10020 10033 19888 19890
 # ssh port
 EXPOSE 22
-# other port
-EXPOSE 49707
