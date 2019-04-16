@@ -35,22 +35,21 @@ ENV PATH $PATH:$JAVA_HOME/bin
 
 # install and configure hadoop
 RUN wget https://archive.apache.org/dist/hadoop/common/hadoop-3.1.2/hadoop-3.1.2.tar.gz
-RUN tar -xvf hadoop-3.1.2.tar.gz && mv hadoop-3.1.2 /usr/local/hadoop && rm -rf hadoop-3.1.2.tar.gz
+RUN tar -xvf hadoop-3.1.2.tar.gz && mv hadoop-3.1.2 /opt/hadoop && rm -rf hadoop-3.1.2.tar.gz
 
-ENV HADOOP_HOME /usr/local/hadoop
-ENV HADOOP_PREFIX /usr/local/hadoop
-ENV HADOOP_COMMON_HOME /usr/local/hadoop
-ENV HADOOP_HDFS_HOME /usr/local/hadoop
-ENV HADOOP_MAPRED_HOME /usr/local/hadoop
-ENV HADOOP_YARN_HOME /usr/local/hadoop
-ENV HADOOP_CONF_DIR /usr/local/hadoop/etc/hadoop
+ENV HADOOP_HOME /opt/hadoop
+ENV HADOOP_PREFIX /opt/hadoop
+ENV HADOOP_COMMON_HOME /opt/hadoop
+ENV HADOOP_HDFS_HOME /opt/hadoop
+ENV HADOOP_MAPRED_HOME /opt/hadoop
+ENV HADOOP_YARN_HOME /opt/hadoop
+ENV HADOOP_CONF_DIR /opt/hadoop/etc/hadoop
 ENV PATH $PATH:$HADOOP_HOME/bin
 
 # JAVA_HOME should be same to the version which has been installed above.
 RUN echo "export JAVA_HOME=/usr/java/default" >> $HADOOP_PREFIX/etc/hadoop/hadoop-env.sh
-RUN echo "export HADOOP_HOME=/usr/local/hadoop" >> $HADOOP_PREFIX/etc/hadoop/hadoop-env.sh
-RUN echo "export HADOOP_CONF_DIR=/usr/local/hadoop/etc/hadoop/" >> $HADOOP_PREFIX/etc/hadoop/hadoop-env.sh
-RUN echo "export HADOOP_ROOT_LOGGER=DEBUG,console" >> $HADOOP_PREFIX/etc/hadoop/hadoop-env.sh
+RUN echo "export HADOOP_HOME=/opt/hadoop" >> $HADOOP_PREFIX/etc/hadoop/hadoop-env.sh
+RUN echo "export HADOOP_CONF_DIR=/opt/hadoop/etc/hadoop/" >> $HADOOP_PREFIX/etc/hadoop/hadoop-env.sh
 
 # pseudo distributed
 ADD Configs/core-site.xml.temple $HADOOP_PREFIX/etc/hadoop/core-site.xml.temple
@@ -63,7 +62,7 @@ RUN chown root:root /etc/bootstrap.sh && chmod 700 /etc/bootstrap.sh
 ENV BOOTSTRAP /etc/bootstrap.sh
 
 # workingaround docker.io build error
-RUN chmod +x /usr/local/hadoop/etc/hadoop/*-env.sh
+RUN chmod +x /opt/hadoop/etc/hadoop/*-env.sh
 
 CMD ["/etc/bootstrap.sh", "-d"]
 
