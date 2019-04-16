@@ -27,10 +27,15 @@ RUN sed  -i "/^[^#]*UsePAM/ s/.*/#&/"  /etc/ssh/sshd_config && \
 
 # install and config java
 # A. IBM JDK
-RUN wget http://public.dhe.ibm.com/ibmdl/export/pub/systems/cloud/runtimes/java/8.0.5.31/linux/x86_64/ibm-java-x86_64-sdk-8.0-5.31.bin && chmod +x ibm-java-x86_64-sdk-8.0-5.31.bin
-RUN sh -c '/bin/echo -e "\n4\n1\n\n/usr/java/default\nY\n\n\n" | ./ibm-java-x86_64-sdk-8.0-5.31.bin'
-RUN rm -f ibm-java-x86_64-sdk-8.0-5.31.bin 
-ENV JAVA_HOME /usr/java/default
+#RUN wget http://public.dhe.ibm.com/ibmdl/export/pub/systems/cloud/runtimes/java/8.0.5.31/linux/x86_64/ibm-java-x86_64-sdk-8.0-5.31.bin && chmod +x ibm-java-x86_64-sdk-8.0-5.31.bin
+#RUN sh -c '/bin/echo -e "\n4\n1\n\n/usr/java/default\nY\n\n\n" | ./ibm-java-x86_64-sdk-8.0-5.31.bin'
+#RUN rm -f ibm-java-x86_64-sdk-8.0-5.31.bin 
+#ENV JAVA_HOME /usr/java/default
+
+# B. Open JDK 8
+RUN apt-get install -y openjdk-8-jdk
+ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64
+
 ENV PATH $PATH:$JAVA_HOME/bin
 
 # install and configure hadoop
@@ -47,7 +52,7 @@ ENV HADOOP_CONF_DIR /opt/hadoop/etc/hadoop
 ENV PATH $PATH:$HADOOP_HOME/bin
 
 # JAVA_HOME should be same to the version which has been installed above.
-RUN echo "export JAVA_HOME=/usr/java/default" >> $HADOOP_PREFIX/etc/hadoop/hadoop-env.sh
+RUN echo "export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64" >> $HADOOP_PREFIX/etc/hadoop/hadoop-env.sh
 RUN echo "export HADOOP_HOME=/opt/hadoop" >> $HADOOP_PREFIX/etc/hadoop/hadoop-env.sh
 RUN echo "export HADOOP_CONF_DIR=/opt/hadoop/etc/hadoop/" >> $HADOOP_PREFIX/etc/hadoop/hadoop-env.sh
 
