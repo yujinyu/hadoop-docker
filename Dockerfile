@@ -35,7 +35,10 @@ RUN sed  -i "/^[^#]*UsePAM/ s/.*/#&/"  /etc/ssh/sshd_config && \
 #ENV JAVA_HOME=/usr/java/default
 
 # B. Open JDK 8
-RUN apt-get install -y openjdk-8-jdk
+RUN apt-get update && \
+    apt-get install -y openjdk-8-jdk && \
+	apt-get autoremove -y && \
+    apt-get clean all
 ENV JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
 
 # install and configure hadoop
