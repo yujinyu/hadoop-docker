@@ -42,16 +42,17 @@ ENV JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
 RUN wget https://archive.apache.org/dist/hadoop/common/hadoop-3.1.2/hadoop-3.1.2.tar.gz
 RUN tar -xvf hadoop-3.1.2.tar.gz && rm -rf hadoop-3.1.2.tar.gz && rm -rf hadoop-3.1.2/share/doc && mv hadoop-3.1.2 /opt/hadoop 
 
-ENV HADOOP_HOME=/opt/hadoop HADOOP_PREFIX=${HADOOP_HOME} HADOOP_COMMON_HOME=${HADOOP_HOME} HADOOP_HDFS_HOME=${HADOOP_HOME} HADOOP_MAPRED_HOME=${HADOOP_HOME} HADOOP_YARN_HOME=${HADOOP_HOME} HADOOP_CONF_DIR=${HADOOP_HOME}/etc/hadoop PATH=$PATH:${JAVA_HOME}/bin:${HADOOP_HOME}/bin
+ENV HADOOP_HOME=/opt/hadoop 
+ENV HADOOP_PREFIX=${HADOOP_HOME} HADOOP_COMMON_HOME=${HADOOP_HOME} HADOOP_HDFS_HOME=${HADOOP_HOME} HADOOP_MAPRED_HOME=${HADOOP_HOME} HADOOP_YARN_HOME=${HADOOP_HOME} HADOOP_CONF_DIR=${HADOOP_HOME}/etc/hadoop PATH=$PATH:${JAVA_HOME}/bin:${HADOOP_HOME}/bin
 
 # JAVA_HOME should be same to the version which has been installed above.
-RUN echo "export JAVA_HOME=${JAVA_HOME}\nexport HADOOP_HOME=${HADOOP_HOME}\nHADOOP_CONF_DIR=${HADOOP_CONF_DIR}" >> $HADOOP_PREFIX/etc/hadoop/hadoop-env.sh
+RUN echo "export JAVA_HOME=${JAVA_HOME}\nexport HADOOP_HOME=${HADOOP_HOME}\nHADOOP_CONF_DIR=${HADOOP_CONF_DIR}" >> ${HADOOP_PREFIX}/etc/hadoop/hadoop-env.sh
 
 # pseudo distributed
-ADD Configs/core-site.xml.temple $HADOOP_PREFIX/etc/hadoop/core-site.xml.temple
-ADD Configs/hdfs-site.xml $HADOOP_PREFIX/etc/hadoop/hdfs-site.xml
-ADD Configs/mapred-site.xml $HADOOP_PREFIX/etc/hadoop/mapred-site.xml
-ADD Configs/yarn-site.xml $HADOOP_PREFIX/etc/hadoop/yarn-site.xml
+ADD Configs/core-site.xml.temple ${HADOOP_PREFIX}/etc/hadoop/core-site.xml.temple
+ADD Configs/hdfs-site.xml ${HADOOP_PREFIX}/etc/hadoop/hdfs-site.xml
+ADD Configs/mapred-site.xml ${HADOOP_PREFIX}/etc/hadoop/mapred-site.xml
+ADD Configs/yarn-site.xml ${HADOOP_PREFIX}/etc/hadoop/yarn-site.xml
 
 ADD Configs/bootstrap.sh /etc/bootstrap.sh
 RUN chown root:root /etc/bootstrap.sh && chmod 700 /etc/bootstrap.sh
