@@ -1,9 +1,11 @@
-FROM ubuntu:16.04
+FROM ubuntu:18.04
 MAINTAINER yujinyu
 USER root
 
 # add hadoop user
 RUN useradd -ms /bin/bash hadoop
+RUN useradd -ms /bin/bash yarn
+RUN useradd -ms /bin/bash hdfs
 
 # install dev tools
 RUN apt-get update && \
