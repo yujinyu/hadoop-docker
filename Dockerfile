@@ -24,8 +24,8 @@ RUN useradd -ms /bin/bash hdfs
 # install dev tools
 RUN apt-get update && \
     apt-get install -y openssh-server openssh-client openjdk-8-jdk && \
-    apt-get autoremove -y && \
-    apt-get clean all
+    apt-get autoremove -y && apt-get clean all && \
+    rm /var/log/*.log && rm /var/log/apt/*.log
 
 # configure passwordless ssh
 RUN rm -f /etc/ssh/ssh_host_dsa_key /etc/ssh/ssh_host_rsa_key /root/.ssh/id_rsa && \
