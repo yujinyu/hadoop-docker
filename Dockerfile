@@ -1,19 +1,33 @@
+FROM ubuntu:18.04 as build
+RUN apt-get update && apt-get install -y wget tar
+# install and configure hadoop
+ENV HADOOP_HOME=/opt/hadoop
+RUN wget https://archive.apache.org/dist/hadoop/common/hadoop-3.1.2/hadoop-3.1.2.tar.gz
+RUN tar -xvf hadoop-3.1.2.tar.gz && rm -rf hadoop-3.1.2/share/doc && mv hadoop-3.1.2 ${HADOOP_HOME}
+
+ADD Configs/core-site.xml.temple ${HADOOP_HOME}/etc/hadoop/core-site.xml.temple
+ADD Configs/hdfs-site.xml ${HADOOP_HOME}/etc/hadoop/hdfs-site.xml
+ADD Configs/mapred-site.xml ${HADOOP_HOME}/etc/hadoop/mapred-site.xml
+ADD Configs/yarn-site.xml ${HADOOP_HOME}/etc/hadoop/yarn-site.xml
+
 FROM ubuntu:18.04
 MAINTAINER yujinyu
 USER root
 
-# add hadoop user
+COPY --from=build /opt/hadoop /opt/
+
+# add need users
 RUN useradd -ms /bin/bash hadoop
 RUN useradd -ms /bin/bash yarn
 RUN useradd -ms /bin/bash hdfs
 
 # install dev tools
 RUN apt-get update && \
-    apt-get install -y wget tar openssh-server openssh-client && \
+    apt-get install -y openssh-server openssh-client openjdk-8-jdk && \
     apt-get autoremove -y && \
     apt-get clean all
 
-# configure ssh --> passwordless ssh
+# configure passwordless ssh
 RUN rm -f /etc/ssh/ssh_host_dsa_key /etc/ssh/ssh_host_rsa_key /root/.ssh/id_rsa && \
     ssh-keygen -q -N "" -t dsa -f /etc/ssh/ssh_host_dsa_key && \
     ssh-keygen -q -N "" -t rsa -f /etc/ssh/ssh_host_rsa_key && \
@@ -23,47 +37,19 @@ RUN rm -f /etc/ssh/ssh_host_dsa_key /etc/ssh/ssh_host_rsa_key /root/.ssh/id_rsa 
 ADD Configs/ssh_config /root/.ssh/config
 RUN chmod 600 /root/.ssh/config && \
     chown root:root /root/.ssh/config
-# fix the 254 error code
 RUN sed  -i "/^[^#]*UsePAM/ s/.*/#&/"  /etc/ssh/sshd_config && \
     echo "UsePAM no" >> /etc/ssh/sshd_config
 
-# install and config java
-# A. IBM JDK
-#RUN wget http://public.dhe.ibm.com/ibmdl/export/pub/systems/cloud/runtimes/java/8.0.5.31/linux/x86_64/ibm-java-x86_64-sdk-8.0-5.31.bin && chmod +x ibm-java-x86_64-sdk-8.0-5.31.bin
-#RUN sh -c '/bin/echo -e "\n4\n1\n\n/usr/java/default\nY\n\n\n" | ./ibm-java-x86_64-sdk-8.0-5.31.bin'
-#RUN rm -f ibm-java-x86_64-sdk-8.0-5.31.bin 
-#ENV JAVA_HOME=/usr/java/default
-
-# B. Open JDK 8
-RUN apt-get update && \
-    apt-get install -y openjdk-8-jdk && \
-	apt-get autoremove -y && \
-    apt-get clean all
-ENV JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
-
-# install and configure hadoop
-RUN wget https://archive.apache.org/dist/hadoop/common/hadoop-3.1.2/hadoop-3.1.2.tar.gz
-RUN tar -xvf hadoop-3.1.2.tar.gz && rm -rf hadoop-3.1.2.tar.gz && rm -rf hadoop-3.1.2/share/doc && mv hadoop-3.1.2 /opt/hadoop 
-
-ENV HADOOP_HOME=/opt/hadoop 
+# configure System Envs
+ENV JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64 HADOOP_HOME=/opt/hadoop
 ENV HADOOP_PREFIX=${HADOOP_HOME} HADOOP_COMMON_HOME=${HADOOP_HOME} HADOOP_HDFS_HOME=${HADOOP_HOME} HADOOP_MAPRED_HOME=${HADOOP_HOME} HADOOP_YARN_HOME=${HADOOP_HOME} HADOOP_CONF_DIR=${HADOOP_HOME}/etc/hadoop PATH=$PATH:${JAVA_HOME}/bin:${HADOOP_HOME}/bin
 
 # JAVA_HOME should be same to the version which has been installed above.
 RUN echo "export JAVA_HOME=${JAVA_HOME}\nexport HADOOP_HOME=${HADOOP_HOME}\nHADOOP_CONF_DIR=${HADOOP_CONF_DIR}" >> ${HADOOP_PREFIX}/etc/hadoop/hadoop-env.sh
 
-# pseudo distributed
-ADD Configs/core-site.xml.temple ${HADOOP_PREFIX}/etc/hadoop/core-site.xml.temple
-ADD Configs/hdfs-site.xml ${HADOOP_PREFIX}/etc/hadoop/hdfs-site.xml
-ADD Configs/mapred-site.xml ${HADOOP_PREFIX}/etc/hadoop/mapred-site.xml
-ADD Configs/yarn-site.xml ${HADOOP_PREFIX}/etc/hadoop/yarn-site.xml
-
 ADD Configs/bootstrap.sh /etc/bootstrap.sh
 RUN chown root:root /etc/bootstrap.sh && chmod 700 /etc/bootstrap.sh
 ENV BOOTSTRAP=/etc/bootstrap.sh
-
-# workingaround docker.io build error
-RUN chmod +x /opt/hadoop/etc/hadoop/*-env.sh
-
 CMD ["/etc/bootstrap.sh", "-d"]
 
 # yarn port
