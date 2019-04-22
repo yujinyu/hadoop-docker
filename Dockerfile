@@ -32,31 +32,22 @@ RUN sed  -i "/^[^#]*UsePAM/ s/.*/#&/"  /etc/ssh/sshd_config && \
 #RUN wget http://public.dhe.ibm.com/ibmdl/export/pub/systems/cloud/runtimes/java/8.0.5.31/linux/x86_64/ibm-java-x86_64-sdk-8.0-5.31.bin && chmod +x ibm-java-x86_64-sdk-8.0-5.31.bin
 #RUN sh -c '/bin/echo -e "\n4\n1\n\n/usr/java/default\nY\n\n\n" | ./ibm-java-x86_64-sdk-8.0-5.31.bin'
 #RUN rm -f ibm-java-x86_64-sdk-8.0-5.31.bin 
-#ENV JAVA_HOME /usr/java/default
+#ENV JAVA_HOME=/usr/java/default
 
 # B. Open JDK 8
 RUN apt-get install -y openjdk-8-jdk
-ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64
+ENV JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
 
-ENV PATH $PATH:$JAVA_HOME/bin
+ENV PATH $PATH:${JAVA_HOME}/bin
 
 # install and configure hadoop
 RUN wget https://archive.apache.org/dist/hadoop/common/hadoop-3.1.2/hadoop-3.1.2.tar.gz
 RUN tar -xvf hadoop-3.1.2.tar.gz && mv hadoop-3.1.2 /opt/hadoop && rm -rf hadoop-3.1.2.tar.gz
 
-ENV HADOOP_HOME /opt/hadoop
-ENV HADOOP_PREFIX /opt/hadoop
-ENV HADOOP_COMMON_HOME /opt/hadoop
-ENV HADOOP_HDFS_HOME /opt/hadoop
-ENV HADOOP_MAPRED_HOME /opt/hadoop
-ENV HADOOP_YARN_HOME /opt/hadoop
-ENV HADOOP_CONF_DIR /opt/hadoop/etc/hadoop
-ENV PATH $PATH:$HADOOP_HOME/bin
+ENV HADOOP_HOME=/opt/hadoop HADOOP_PREFIX=/opt/hadoop HADOOP_COMMON_HOME=/opt/hadoop HADOOP_HDFS_HOME=/opt/hadoop HADOOP_MAPRED_HOME=/opt/hadoop HADOOP_YARN_HOME=/opt/hadoop HADOOP_CONF_DIR=/opt/hadoop/etc/hadoop PATH=$PATH:${HADOOP_HOME}/bin
 
 # JAVA_HOME should be same to the version which has been installed above.
-RUN echo "export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64" >> $HADOOP_PREFIX/etc/hadoop/hadoop-env.sh
-RUN echo "export HADOOP_HOME=/opt/hadoop" >> $HADOOP_PREFIX/etc/hadoop/hadoop-env.sh
-RUN echo "export HADOOP_CONF_DIR=/opt/hadoop/etc/hadoop/" >> $HADOOP_PREFIX/etc/hadoop/hadoop-env.sh
+RUN echo "export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64\nexport HADOOP_HOME=/opt/hadoop\nHADOOP_CONF_DIR=/opt/hadoop/etc/hadoop/" >> $HADOOP_PREFIX/etc/hadoop/hadoop-env.sh
 
 # pseudo distributed
 ADD Configs/core-site.xml.temple $HADOOP_PREFIX/etc/hadoop/core-site.xml.temple
@@ -66,7 +57,7 @@ ADD Configs/yarn-site.xml $HADOOP_PREFIX/etc/hadoop/yarn-site.xml
 
 ADD Configs/bootstrap.sh /etc/bootstrap.sh
 RUN chown root:root /etc/bootstrap.sh && chmod 700 /etc/bootstrap.sh
-ENV BOOTSTRAP /etc/bootstrap.sh
+ENV BOOTSTRAP=/etc/bootstrap.sh
 
 # workingaround docker.io build error
 RUN chmod +x /opt/hadoop/etc/hadoop/*-env.sh
