@@ -37,8 +37,8 @@ RUN rm -f /etc/ssh/ssh_host_dsa_key /etc/ssh/ssh_host_rsa_key /root/.ssh/id_rsa 
 
 ADD Configs/ssh_config /root/.ssh/config
 RUN chmod 600 /root/.ssh/config && \
-    chown root:root /root/.ssh/config
-RUN sed  -i "/^[^#]*UsePAM/ s/.*/#&/"  /etc/ssh/sshd_config && \
+    chown root:root /root/.ssh/config && \
+    sed -i "/^[^#]*UsePAM/ s/.*/#&/" /etc/ssh/sshd_config && \
     echo "UsePAM no" >> /etc/ssh/sshd_config
 
 # configure System Envs
