@@ -15,8 +15,7 @@ FROM ubuntu:18.04
 MAINTAINER yujinyu
 USER root
 
-COPY --from=build /opt/hadoop /opt/
-RUN ls /opt/ -la
+COPY --from=build /opt/ /opt/
 
 # add users
 RUN useradd -ms /bin/bash hadoop && \
