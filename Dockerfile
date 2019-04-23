@@ -29,14 +29,13 @@ RUN apt-get update && \
     rm /var/log/*.log && rm /var/log/apt/*.log
 
 # configure passwordless ssh
+ADD Configs/ssh_config /root/.ssh/config
 RUN rm -f /etc/ssh/ssh_host_dsa_key /etc/ssh/ssh_host_rsa_key /root/.ssh/id_rsa && \
     ssh-keygen -q -N "" -t dsa -f /etc/ssh/ssh_host_dsa_key && \
     ssh-keygen -q -N "" -t rsa -f /etc/ssh/ssh_host_rsa_key && \
     ssh-keygen -q -N "" -t rsa -f /root/.ssh/id_rsa && \
-    cp /root/.ssh/id_rsa.pub /root/.ssh/authorized_keys
-
-ADD Configs/ssh_config /root/.ssh/config
-RUN chmod 600 /root/.ssh/config && \
+    cp /root/.ssh/id_rsa.pub /root/.ssh/authorized_keys && \
+    chmod 600 /root/.ssh/config && \
     chown root:root /root/.ssh/config && \
     sed -i "/^[^#]*UsePAM/ s/.*/#&/" /etc/ssh/sshd_config && \
     echo "UsePAM no" >> /etc/ssh/sshd_config
