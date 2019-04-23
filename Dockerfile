@@ -16,6 +16,7 @@ MAINTAINER yujinyu
 USER root
 
 COPY --from=build /opt/hadoop /opt/
+RUN ls /opt/ -la
 
 # add users
 RUN useradd -ms /bin/bash hadoop && \
