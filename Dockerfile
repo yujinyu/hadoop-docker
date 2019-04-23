@@ -1,4 +1,5 @@
 FROM ubuntu:18.04 as build
+
 RUN apt-get update && apt-get install -y wget tar
 # install and configure hadoop
 ENV HADOOP_HOME=/opt/hadoop
@@ -16,10 +17,10 @@ USER root
 
 COPY --from=build /opt/hadoop /opt/
 
-# add need users
-RUN useradd -ms /bin/bash hadoop
-RUN useradd -ms /bin/bash yarn
-RUN useradd -ms /bin/bash hdfs
+# add users
+RUN useradd -ms /bin/bash hadoop && \
+	useradd -ms /bin/bash yarn && \
+	useradd -ms /bin/bash hdfs
 
 # install dev tools
 RUN apt-get update && \
