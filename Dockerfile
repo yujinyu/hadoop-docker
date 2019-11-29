@@ -2,14 +2,14 @@ FROM ubuntu:18.04 as build
 WORKDIR /
 # install development tools
 RUN apt-get update && \
-    apt-get install -y apt-utils wget tar build-essential \
+    apt-get install -y apt-utils curl tar build-essential \
     autoconf automake libtool cmake zlib1g-dev pkg-config \
 	openjdk-8-jdk libssl-dev scala maven && \
     apt-get autoremove -y && \
     apt-get clean all
 	
 # install protobuf 2.5.0
-RUN wget https://github.com/google/protobuf/releases/download/v2.5.0/protobuf-2.5.0.tar.gz \
+RUN curl -O https://github.com/google/protobuf/releases/download/v2.5.0/protobuf-2.5.0.tar.gz \
 	&& tar -xvf protobuf-2.5.0.tar.gz && cd protobuf-2.5.0/ \
 	&& ./autogen.sh && ./configure && make && make install \
 	&& rm -rf protobuf-2.5.0*
