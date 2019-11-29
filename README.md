@@ -1,7 +1,7 @@
 # Docker Image Info:  
 
-- OS Version: Ubuntu 16.04   
+- OS Version: Ubuntu 18.04   
 
-- Java Version: IBM JDK 8.0.5.31
+- Java Version: openJDK8
 
 - Hadoop Version: 3.1.2
