@@ -1,22 +1,19 @@
-FROM ubuntu:18.04 as build
+FROM ubuntu:18.04 as dev-env
 WORKDIR /
 # install development tools
 RUN apt-get update && \
     apt-get install -y apt-utils wget tar build-essential \
     autoconf automake libtool cmake zlib1g-dev pkg-config \
-	openjdk-8-jdk libssl-dev scala maven && \
-    apt-get autoremove -y && \
-    apt-get clean all
-	
+	openjdk-8-jdk libssl-dev scala maven
+
+ENV JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
+ENV PATH=$PATH:${JAVA_HOME}/bin
+
 # install protobuf 2.5.0
 RUN wget https://github.com/google/protobuf/releases/download/v2.5.0/protobuf-2.5.0.tar.gz \
 	&& tar -xvf protobuf-2.5.0.tar.gz && cd protobuf-2.5.0/ \
-	&& ./autogen.sh && ./configure && make && make install \
-	&& rm -rf protobuf-2.5.0*
-
-ENV LD_LIBRARY_PATH /usr/local/lib
-ENV JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
-ENV PATH=$PATH:${JAVA_HOME}/bin
+	&& ./autogen.sh && ./configure && make && make install
+ENV LD_LIBRARY_PATH=/usr/local/lib
 
 # install and configure hadoop
 RUN wget https://archive.apache.org/dist/hadoop/common/hadoop-3.1.2/hadoop-3.1.2-src.tar.gz
@@ -25,12 +22,15 @@ RUN tar -xvf hadoop-3.1.2-src.tar.gz && cd hadoop-3.1.2-src && mvn package -Pdis
 FROM ubuntu:18.04
 MAINTAINER yujinyu
 USER root
-COPY --from=build /hadoop-3.1.2-src/hadoop-dist/target/hadoop-3.1.2 /opt/
+COPY --from=dev-env /hadoop-3.1.2-src/hadoop-dist/target/hadoop-3.1.2 /opt/
 # add hadoop user
-RUN useradd -ms /bin/bash hadoop
+RUN mv /opt/hadoop-3.1.2 /opt/hadoop && \
+    useradd -ms /bin/bash hadoop && \
+    useradd -ms /bin/bash yarn && \
+    useradd -ms /bin/bash hdfs
 
 RUN apt-get update && \
-    apt-get install -yopenssh-server openssh-client openjdk-8-jdk && \
+    apt-get install -y openssh-server openssh-client openjdk-8-jdk && \
     apt-get autoremove -y && \
     apt-get clean all
 # configure ssh --> passwordless ssh
