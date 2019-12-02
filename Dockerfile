@@ -46,7 +46,6 @@ ENV PATH=${PATH}:${JAVA_HOME}/bin:${HADOOP_HOME}/bin
 ENV HADOOP_COMMON_HOME=${HADOOP_HOME} HADOOP_HDFS_HOME=${HADOOP_HOME} HADOOP_MAPRED_HOME=${HADOOP_HOME}
 ENV HADOOP_YARN_HOME=${HADOOP_HOME} HADOOP_CONF_DIR=${HADOOP_HOME}/etc/hadoop
 
-
 # JAVA_HOME should be same to the version which has been installed above.
 RUN echo "export JAVA_HOME=${JAVA_HOME}\nexport HADOOP_HOME=${HADOOP_HOME}\nexport HADOOP_CONF_DIR=${HADOOP_CONF_DIR}" \
  >> ${HADOOP_HOME}/etc/hadoop/hadoop-env.sh
