@@ -1,5 +1,5 @@
 FROM ubuntu:18.04 as dev-env
-WORKDIR /
+
 # install development tools
 RUN apt-get update && \
     apt-get install -y apt-utils wget tar build-essential \
@@ -10,7 +10,6 @@ ENV JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
 ENV PATH=${PATH}:${JAVA_HOME}/bin
 
 # install protobuf 2.5.0
-#RUN wget https://github.com/google/protobuf/releases/download/v2.5.0/protobuf-2.5.0.tar.gz
 COPY Configs/protobuf-2.5.0.tar.gz /
 RUN tar -xvf protobuf-2.5.0.tar.gz && cd protobuf-2.5.0/ \
 	&& ./autogen.sh && ./configure && make && make install
