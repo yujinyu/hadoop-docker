@@ -23,7 +23,7 @@ RUN tar -xvf hadoop-3.1.2-src.tar.gz && cd hadoop-3.1.2-src && mvn package -Pdis
 FROM ubuntu:18.04
 MAINTAINER yujinyu
 USER root
-COPY --from=dev-env /hadoop-3.1.2-src/hadoop-dist/target/hadoop-3.1.2 /opt/hadoop
+COPY --from=dev-env /hadoop-3.1.2-src/hadoop-dist/target/hadoop-3.1.2 /usr/local/hadoop
 # add hadoop user
 RUN useradd -ms /bin/bash hadoop && \
     useradd -ms /bin/bash yarn && \
@@ -49,7 +49,7 @@ ENV HADOOP_HOME=/usr/local/hadoop
 ENV JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
 ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${HADOOP_HOME}/lib/native:/usr/local/lib HADOOP_CONF_DIR=/usr/local/hadoop/etc/hadoop
 ENV HADOOP_PREFIX=/usr/local/hadoop HADOOP_COMMON_HOME=/usr/local/hadoop HADOOP_HDFS_HOME=/usr/local/hadoop HADOOP_MAPRED_HOME=/usr/local/hadoop HADOOP_YARN_HOME=/usr/local/hadoop
-ENV PATH=$PATH:${JAVA_HOME}/bin:$HADOOP_HOME/bin
+ENV PATH=$PATH:${JAVA_HOME}/bin:${HADOOP_HOME}/bin
 
 # pseudo distributed
 ADD Configs/core-site.xml.temple ${HADOOP_HOME}/etc/hadoop/core-site.xml.temple
@@ -64,7 +64,7 @@ ADD Configs/bootstrap.sh /etc/bootstrap.sh
 ENV BOOTSTRAP /etc/bootstrap.sh
 RUN chown root:root /etc/bootstrap.sh && \
     chmod 700 /etc/bootstrap.sh && \
-    chmod +x /usr/local/hadoop/etc/hadoop/*-env.sh
+    chmod +x ${HADOOP_CONF_DIR}/*-env.sh
 
 CMD ["/etc/bootstrap.sh", "-d"]
 
