@@ -14,7 +14,7 @@ ENV PATH=${PATH}:${JAVA_HOME}/bin
 COPY Configs/protobuf-2.5.0.tar.gz /
 RUN tar -xvf protobuf-2.5.0.tar.gz && cd protobuf-2.5.0/ \
 	&& ./autogen.sh && ./configure && make && make install
-ENV LD_LIBRARY_PATH=/usr/local/lib
+ENV LD_LIBRARY_PATH=/usr/local/lib:${LD_LIBRARY_PATH}
 
 # install and configure hadoop
 COPY Configs/hadoop-3.1.2-src.tar.gz /
