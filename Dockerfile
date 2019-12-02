@@ -2,7 +2,7 @@ FROM ubuntu:18.04 as build
 
 RUN apt-get update && apt-get install -y curl tar
 # install and configure hadoop
-ENV HADOOP_HOME=/opt/hadoop
+ENV HADOOP_HOME=/usr/local/hadoop
 RUN curl -O https://archive.apache.org/dist/hadoop/common/hadoop-3.1.2/hadoop-3.1.2.tar.gz
 RUN tar -xvf hadoop-3.1.2.tar.gz && rm -rf hadoop-3.1.2/share/doc && mv hadoop-3.1.2 ${HADOOP_HOME}
 
@@ -15,7 +15,7 @@ FROM ubuntu:18.04
 MAINTAINER yujinyu
 USER root
 
-COPY --from=build /opt/ /opt/
+COPY --from=build /usr/local/hadoop /usr/local/hadoop
 
 # add users
 RUN useradd -ms /bin/bash hadoop && \
@@ -41,7 +41,7 @@ RUN rm -f /etc/ssh/ssh_host_dsa_key /etc/ssh/ssh_host_rsa_key /root/.ssh/id_rsa 
     echo "UsePAM no" >> /etc/ssh/sshd_config
 
 # configure System Envs
-ENV HADOOP_HOME=/opt/hadoop JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64 LD_LIBRARY_PATH=${HADOOP_HOME}/lib/native:${LD_LIBRARY_PATH}
+ENV HADOOP_HOME=/usr/local/hadoop JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64 LD_LIBRARY_PATH=${HADOOP_HOME}/lib/native:${LD_LIBRARY_PATH}
 ENV PATH=${PATH}:${JAVA_HOME}/bin:${HADOOP_HOME}/bin
 ENV HADOOP_COMMON_HOME=${HADOOP_HOME} HADOOP_HDFS_HOME=${HADOOP_HOME} HADOOP_MAPRED_HOME=${HADOOP_HOME}
 ENV HADOOP_YARN_HOME=${HADOOP_HOME} HADOOP_CONF_DIR=${HADOOP_HOME}/etc/hadoop
