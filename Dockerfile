@@ -23,10 +23,9 @@ RUN tar -xvf hadoop-3.1.2-src.tar.gz && cd hadoop-3.1.2-src && mvn package -Pdis
 FROM ubuntu:18.04
 MAINTAINER yujinyu
 USER root
-COPY --from=dev-env /hadoop-3.1.2-src/hadoop-dist/target/hadoop-3.1.2 /opt/
+COPY --from=dev-env /hadoop-3.1.2-src/hadoop-dist/target/hadoop-3.1.2 /opt/hadoop
 # add hadoop user
-RUN mv /opt/hadoop-3.1.2 /opt/hadoop && \
-    useradd -ms /bin/bash hadoop && \
+RUN useradd -ms /bin/bash hadoop && \
     useradd -ms /bin/bash yarn && \
     useradd -ms /bin/bash hdfs
 
@@ -35,21 +34,20 @@ RUN apt-get update && \
     apt-get autoremove -y && \
     apt-get clean all
 # configure ssh --> passwordless ssh
+ADD Configs/ssh_config /root/.ssh/config
 RUN rm -f /etc/ssh/ssh_host_dsa_key /etc/ssh/ssh_host_rsa_key /root/.ssh/id_rsa && \
     ssh-keygen -q -N "" -t dsa -f /etc/ssh/ssh_host_dsa_key && \
     ssh-keygen -q -N "" -t rsa -f /etc/ssh/ssh_host_rsa_key && \
     ssh-keygen -q -N "" -t rsa -f /root/.ssh/id_rsa && \
-    cp /root/.ssh/id_rsa.pub /root/.ssh/authorized_keys
-ADD Configs/ssh_config /root/.ssh/config
-RUN chmod 600 /root/.ssh/config && \
-    chown root:root /root/.ssh/config
-RUN sed  -i "/^[^#]*UsePAM/ s/.*/#&/"  /etc/ssh/sshd_config && \
+    cp /root/.ssh/id_rsa.pub /root/.ssh/authorized_keys && \
+    chmod 600 /root/.ssh/config && \
+    chown root:root /root/.ssh/config && \
+    sed  -i "/^[^#]*UsePAM/ s/.*/#&/"  /etc/ssh/sshd_config && \
     echo "UsePAM no" >> /etc/ssh/sshd_config
 
 ENV HADOOP_HOME=/usr/local/hadoop
 ENV JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
-ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${HADOOP_HOME}/lib/native:/usr/local/lib
-ENV HADOOP_CONF_DIR=/usr/local/hadoop/etc/hadoop
+ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${HADOOP_HOME}/lib/native:/usr/local/lib HADOOP_CONF_DIR=/usr/local/hadoop/etc/hadoop
 ENV HADOOP_PREFIX=/usr/local/hadoop HADOOP_COMMON_HOME=/usr/local/hadoop HADOOP_HDFS_HOME=/usr/local/hadoop HADOOP_MAPRED_HOME=/usr/local/hadoop HADOOP_YARN_HOME=/usr/local/hadoop
 ENV PATH=$PATH:${JAVA_HOME}/bin:$HADOOP_HOME/bin
 
@@ -63,11 +61,10 @@ RUN echo "export JAVA_HOME=${JAVA_HOME}\nexport HADOOP_HOME=${HADOOP_HOME}\nexpo
  >> ${HADOOP_HOME}/etc/hadoop/hadoop-env.sh
 
 ADD Configs/bootstrap.sh /etc/bootstrap.sh
-RUN chown root:root /etc/bootstrap.sh && chmod 700 /etc/bootstrap.sh
 ENV BOOTSTRAP /etc/bootstrap.sh
-
-# workingaround docker.io build error
-RUN chmod +x /usr/local/hadoop/etc/hadoop/*-env.sh
+RUN chown root:root /etc/bootstrap.sh && \
+    chmod 700 /etc/bootstrap.sh && \
+    chmod +x /usr/local/hadoop/etc/hadoop/*-env.sh
 
 CMD ["/etc/bootstrap.sh", "-d"]
 
