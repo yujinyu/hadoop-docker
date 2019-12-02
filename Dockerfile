@@ -10,13 +10,13 @@ ENV JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
 ENV PATH=$PATH:${JAVA_HOME}/bin
 
 # install protobuf 2.5.0
-RUN wget https://github.com/google/protobuf/releases/download/v2.5.0/protobuf-2.5.0.tar.gz \
-	&& tar -xvf protobuf-2.5.0.tar.gz && cd protobuf-2.5.0/ \
+#RUN wget https://github.com/google/protobuf/releases/download/v2.5.0/protobuf-2.5.0.tar.gz
+COPY Configs/protobuf-2.5.0.tar.gz /
+RUN tar -xvf protobuf-2.5.0.tar.gz && cd protobuf-2.5.0/ \
 	&& ./autogen.sh && ./configure && make && make install
 ENV LD_LIBRARY_PATH=/usr/local/lib
 
 # install and configure hadoop
-#RUN wget https://archive.apache.org/dist/hadoop/common/hadoop-3.1.2/hadoop-3.1.2-src.tar.gz
 COPY Configs/hadoop-3.1.2-src.tar.gz /
 RUN tar -xvf hadoop-3.1.2-src.tar.gz && cd hadoop-3.1.2-src && mvn package -Pdist,native -DskipTests -Dtar
 
