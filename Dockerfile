@@ -7,7 +7,7 @@ RUN apt-get update && \
 	openjdk-8-jdk libssl-dev scala maven
 
 ENV JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
-ENV PATH=$PATH:${JAVA_HOME}/bin
+ENV PATH=${PATH}:${JAVA_HOME}/bin
 
 # install protobuf 2.5.0
 #RUN wget https://github.com/google/protobuf/releases/download/v2.5.0/protobuf-2.5.0.tar.gz
@@ -47,18 +47,18 @@ RUN rm -f /etc/ssh/ssh_host_dsa_key /etc/ssh/ssh_host_rsa_key /root/.ssh/id_rsa 
 
 ENV HADOOP_HOME=/usr/local/hadoop
 ENV JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
-ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${HADOOP_HOME}/lib/native:/usr/local/lib HADOOP_CONF_DIR=/usr/local/hadoop/etc/hadoop
-ENV HADOOP_PREFIX=/usr/local/hadoop HADOOP_COMMON_HOME=/usr/local/hadoop HADOOP_HDFS_HOME=/usr/local/hadoop HADOOP_MAPRED_HOME=/usr/local/hadoop HADOOP_YARN_HOME=/usr/local/hadoop
-ENV PATH=$PATH:${JAVA_HOME}/bin:${HADOOP_HOME}/bin
+ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${HADOOP_HOME}/lib/native:/usr/local/lib HADOOP_CONF_DIR=${HADOOP_HOME}/etc/hadoop
+ENV HADOOP_COMMON_HOME=${HADOOP_HOME} HADOOP_HDFS_HOME=${HADOOP_HOME} HADOOP_MAPRED_HOME=${HADOOP_HOME} HADOOP_YARN_HOME=${HADOOP_HOME}
+ENV PATH=${PATH}:${JAVA_HOME}/bin:${HADOOP_HOME}/bin
 
 # pseudo distributed
-ADD Configs/core-site.xml.temple ${HADOOP_HOME}/etc/hadoop/core-site.xml.temple
-ADD Configs/hdfs-site.xml ${HADOOP_HOME}/etc/hadoop/hdfs-site.xml
-ADD Configs/mapred-site.xml ${HADOOP_HOME}/etc/hadoop/mapred-site.xml
-ADD Configs/yarn-site.xml ${HADOOP_HOME}/etc/hadoop/yarn-site.xml
+ADD Configs/core-site.xml.temple ${HADOOP_CONF_DIR}/core-site.xml.temple
+ADD Configs/hdfs-site.xml ${HADOOP_CONF_DIR}/hdfs-site.xml
+ADD Configs/mapred-site.xml ${HADOOP_CONF_DIR}/mapred-site.xml
+ADD Configs/yarn-site.xml ${HADOOP_CONF_DIR}/yarn-site.xml
 # JAVA_HOME should be same to the version which has been installed above.
 RUN echo "export JAVA_HOME=${JAVA_HOME}\nexport HADOOP_HOME=${HADOOP_HOME}\nexport HADOOP_CONF_DIR=${HADOOP_CONF_DIR}" \
- >> ${HADOOP_HOME}/etc/hadoop/hadoop-env.sh
+ >> ${HADOOP_CONF_DIR}/hadoop-env.sh
 
 ADD Configs/bootstrap.sh /etc/bootstrap.sh
 ENV BOOTSTRAP /etc/bootstrap.sh
