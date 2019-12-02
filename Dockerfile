@@ -45,22 +45,18 @@ RUN chmod 600 /root/.ssh/config && \
 RUN sed  -i "/^[^#]*UsePAM/ s/.*/#&/"  /etc/ssh/sshd_config && \
     echo "UsePAM no" >> /etc/ssh/sshd_config
 
-ENV LD_LIBRARY_PATH=${HADOOP_HOME}/lib/native:/usr/local/lib:${LD_LIBRARY_PATH}
 ENV HADOOP_HOME=/usr/local/hadoop
 ENV JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
-ENV HADOOP_PREFIX=/usr/local/hadoop
-ENV HADOOP_COMMON_HOME=/usr/local/hadoop
-ENV HADOOP_HDFS_HOME=/usr/local/hadoop
-ENV HADOOP_MAPRED_HOME=/usr/local/hadoop
-ENV HADOOP_YARN_HOME=/usr/local/hadoop
+ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${HADOOP_HOME}/lib/native:/usr/local/lib
 ENV HADOOP_CONF_DIR=/usr/local/hadoop/etc/hadoop
+ENV HADOOP_PREFIX=/usr/local/hadoop HADOOP_COMMON_HOME=/usr/local/hadoop HADOOP_HDFS_HOME=/usr/local/hadoop HADOOP_MAPRED_HOME=/usr/local/hadoop HADOOP_YARN_HOME=/usr/local/hadoop
 ENV PATH=$PATH:${JAVA_HOME}/bin:$HADOOP_HOME/bin
 
 # pseudo distributed
-ADD Configs/core-site.xml.temple $HADOOP_PREFIX/etc/hadoop/core-site.xml.temple
-ADD Configs/hdfs-site.xml $HADOOP_PREFIX/etc/hadoop/hdfs-site.xml
-ADD Configs/mapred-site.xml $HADOOP_PREFIX/etc/hadoop/mapred-site.xml
-ADD Configs/yarn-site.xml $HADOOP_PREFIX/etc/hadoop/yarn-site.xml
+ADD Configs/core-site.xml.temple ${HADOOP_HOME}/etc/hadoop/core-site.xml.temple
+ADD Configs/hdfs-site.xml ${HADOOP_HOME}/etc/hadoop/hdfs-site.xml
+ADD Configs/mapred-site.xml ${HADOOP_HOME}/etc/hadoop/mapred-site.xml
+ADD Configs/yarn-site.xml ${HADOOP_HOME}/etc/hadoop/yarn-site.xml
 # JAVA_HOME should be same to the version which has been installed above.
 RUN echo "export JAVA_HOME=${JAVA_HOME}\nexport HADOOP_HOME=${HADOOP_HOME}\nexport HADOOP_CONF_DIR=${HADOOP_CONF_DIR}" \
  >> ${HADOOP_HOME}/etc/hadoop/hadoop-env.sh
