@@ -1,11 +1,26 @@
-FROM ubuntu:18.04 as build
+FROM ubuntu:18.04 as dev-env
+WORKDIR /
+# install development tools
+RUN apt-get update && \
+    apt-get install -y apt-utils wget tar build-essential \
+    autoconf automake libtool cmake zlib1g-dev pkg-config \
+	openjdk-8-jdk libssl-dev scala maven
 
-RUN apt-get update && apt-get install -y curl tar
+ENV JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
+ENV PATH=${PATH}:${JAVA_HOME}/bin
+
+# install protobuf 2.5.0
+#RUN wget https://github.com/google/protobuf/releases/download/v2.5.0/protobuf-2.5.0.tar.gz
+COPY Configs/protobuf-2.5.0.tar.gz /
+RUN tar -xvf protobuf-2.5.0.tar.gz && cd protobuf-2.5.0/ \
+	&& ./autogen.sh && ./configure && make && make install
+ENV LD_LIBRARY_PATH=/usr/local/lib:${LD_LIBRARY_PATH} HADOOP_HOME=/usr/local/hadoop
+
 # install and configure hadoop
-ENV HADOOP_HOME=/usr/local/hadoop
-RUN curl -O https://archive.apache.org/dist/hadoop/common/hadoop-3.1.2/hadoop-3.1.2.tar.gz
-RUN tar -xvf hadoop-3.1.2.tar.gz && rm -rf hadoop-3.1.2/share/doc && mv hadoop-3.1.2 ${HADOOP_HOME}
-
+COPY Configs/hadoop-3.1.2-src.tar.gz /
+RUN tar -xvf hadoop-3.1.2-src.tar.gz && cd hadoop-3.1.2-src && \
+    mvn package -Pdist,native -DskipTests -Dtar && \
+    mv /hadoop-3.1.2-src/hadoop-dist/target/hadoop-3.1.2 ${HADOOP_HOME}
 ADD Configs/core-site.xml.temple ${HADOOP_HOME}/etc/hadoop/core-site.xml.temple
 ADD Configs/hdfs-site.xml ${HADOOP_HOME}/etc/hadoop/hdfs-site.xml
 ADD Configs/mapred-site.xml ${HADOOP_HOME}/etc/hadoop/mapred-site.xml
@@ -13,46 +28,41 @@ ADD Configs/yarn-site.xml ${HADOOP_HOME}/etc/hadoop/yarn-site.xml
 
 FROM ubuntu:18.04
 MAINTAINER yujinyu
-USER root
 
-COPY --from=build /usr/local/hadoop /usr/local/hadoop
-
-# add users
+COPY --from=dev-env /hadoop-3.1.2-src/hadoop-dist/target/hadoop-3.1.2 /usr/local/hadoop
 RUN useradd -ms /bin/bash hadoop && \
-	useradd -ms /bin/bash yarn && \
-	useradd -ms /bin/bash hdfs
+    useradd -ms /bin/bash yarn && \
+    useradd -ms /bin/bash hdfs
 
-# install dev tools
 RUN apt-get update && \
-    apt-get install -y openssh-server openssh-client openjdk-8-jdk && \
-    apt-get autoremove -y && apt-get clean all && \
-    rm /var/log/*.log && rm /var/log/apt/*.log
+    apt-get install -y openjdk-8-jdk && \
+    #apt-get install -y openssh-server openssh-client openjdk-8-jdk && \
+    apt-get autoremove -y && \
+    apt-get clean all
+# configure ssh --> passwordless ssh
+#ADD Configs/ssh_config /root/.ssh/config
+#RUN rm -f /etc/ssh/ssh_host_dsa_key /etc/ssh/ssh_host_rsa_key /root/.ssh/id_rsa && \
+#    ssh-keygen -q -N "" -t dsa -f /etc/ssh/ssh_host_dsa_key && \
+#    ssh-keygen -q -N "" -t rsa -f /etc/ssh/ssh_host_rsa_key && \
+#    ssh-keygen -q -N "" -t rsa -f /root/.ssh/id_rsa && \
+#    cp /root/.ssh/id_rsa.pub /root/.ssh/authorized_keys && \
+#    chmod 600 /root/.ssh/config && \
+#    chown root:root /root/.ssh/config && \
+#    sed  -i "/^[^#]*UsePAM/ s/.*/#&/"  /etc/ssh/sshd_config && \
+#    echo "UsePAM no" >> /etc/ssh/sshd_config
 
-# configure passwordless ssh
-ADD Configs/ssh_config /root/.ssh/config
-RUN rm -f /etc/ssh/ssh_host_dsa_key /etc/ssh/ssh_host_rsa_key /root/.ssh/id_rsa && \
-    ssh-keygen -q -N "" -t dsa -f /etc/ssh/ssh_host_dsa_key && \
-    ssh-keygen -q -N "" -t rsa -f /etc/ssh/ssh_host_rsa_key && \
-    ssh-keygen -q -N "" -t rsa -f /root/.ssh/id_rsa && \
-    cp /root/.ssh/id_rsa.pub /root/.ssh/authorized_keys && \
-    chmod 600 /root/.ssh/config && \
-    chown root:root /root/.ssh/config && \
-    sed -i "/^[^#]*UsePAM/ s/.*/#&/" /etc/ssh/sshd_config && \
-    echo "UsePAM no" >> /etc/ssh/sshd_config
-
-# configure System Envs
-ENV HADOOP_HOME=/usr/local/hadoop JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64 LD_LIBRARY_PATH=${HADOOP_HOME}/lib/native:${LD_LIBRARY_PATH}
-ENV PATH=${PATH}:${JAVA_HOME}/bin:${HADOOP_HOME}/bin
-ENV HADOOP_COMMON_HOME=${HADOOP_HOME} HADOOP_HDFS_HOME=${HADOOP_HOME} HADOOP_MAPRED_HOME=${HADOOP_HOME}
-ENV HADOOP_YARN_HOME=${HADOOP_HOME} HADOOP_CONF_DIR=${HADOOP_HOME}/etc/hadoop
+ENV HADOOP_HOME=/usr/local/hadoop JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
+ENV PATH=${PATH}:${JAVA_HOME}/bin:${HADOOP_HOME}/bin LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${HADOOP_HOME}/lib/native:/usr/local/lib HADOOP_CONF_DIR=${HADOOP_HOME}/etc/hadoop HADOOP_COMMON_HOME=${HADOOP_HOME} HADOOP_HDFS_HOME=${HADOOP_HOME} HADOOP_MAPRED_HOME=${HADOOP_HOME} HADOOP_YARN_HOME=${HADOOP_HOME}
 
 # JAVA_HOME should be same to the version which has been installed above.
-RUN echo "export JAVA_HOME=${JAVA_HOME}\nexport HADOOP_HOME=${HADOOP_HOME}\nexport HADOOP_CONF_DIR=${HADOOP_CONF_DIR}" \
- >> ${HADOOP_HOME}/etc/hadoop/hadoop-env.sh
+RUN echo "export JAVA_HOME=${JAVA_HOME}\nexport HADOOP_HOME=${HADOOP_HOME}\nexport HADOOP_CONF_DIR=${HADOOP_CONF_DIR}" >> ${HADOOP_CONF_DIR}/hadoop-env.sh
 
 ADD Configs/bootstrap.sh /etc/bootstrap.sh
-RUN chown root:root /etc/bootstrap.sh && chmod 700 /etc/bootstrap.sh
-ENV BOOTSTRAP=/etc/bootstrap.sh
+ENV BOOTSTRAP /etc/bootstrap.sh
+RUN chown root:root /etc/bootstrap.sh && \
+    chmod 700 /etc/bootstrap.sh && \
+    chmod +x ${HADOOP_CONF_DIR}/*-env.sh
+
 CMD ["/etc/bootstrap.sh", "-d"]
 
 # yarn port
