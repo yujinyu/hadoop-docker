@@ -16,7 +16,8 @@ RUN wget https://github.com/google/protobuf/releases/download/v2.5.0/protobuf-2.
 ENV LD_LIBRARY_PATH=/usr/local/lib
 
 # install and configure hadoop
-RUN wget https://archive.apache.org/dist/hadoop/common/hadoop-3.1.2/hadoop-3.1.2-src.tar.gz
+#RUN wget https://archive.apache.org/dist/hadoop/common/hadoop-3.1.2/hadoop-3.1.2-src.tar.gz
+COPY Configs/hadoop-3.1.2-src.tar.gz /
 RUN tar -xvf hadoop-3.1.2-src.tar.gz && cd hadoop-3.1.2-src && mvn package -Pdist,native -DskipTests -Dtar
 
 FROM ubuntu:18.04
