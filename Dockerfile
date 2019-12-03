@@ -28,7 +28,7 @@ ADD Configs/yarn-site.xml ${HADOOP_HOME}/etc/hadoop/yarn-site.xml
 FROM ubuntu:18.04
 MAINTAINER yujinyu
 
-COPY --from=dev-env /hadoop-3.1.2-src/hadoop-dist/target/hadoop-3.1.2 /usr/local/hadoop
+COPY --from=dev-env /usr/local/hadoop /usr/local/hadoop
 RUN useradd -ms /bin/bash hadoop && \
     useradd -ms /bin/bash yarn && \
     useradd -ms /bin/bash hdfs
