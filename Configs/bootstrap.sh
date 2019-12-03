@@ -10,7 +10,8 @@ rm /tmp/*.pid
 cd ${HADOOP_HOME}/share/hadoop/common ; for cp in ${ACP//,/ }; do  echo == $cp; curl -LO $cp ; done; cd -
 
 # altering the core-site configuration
-sed s/HOSTNAME/$HOSTNAME/ /usr/local/hadoop/etc/hadoop/core-site.xml.temple > /usr/local/hadoop/etc/hadoop/core-site.xml
+sed s/HOSTNAME/$HOSTNAME/ ${HADOOP_HOME}/etc/hadoop/core-site.xml.temple > \
+ ${HADOOP_HOME}/etc/hadoop/core-site.xml
 
 service ssh start
 ${HADOOP_HOME}/bin/hdfs namenode -format
