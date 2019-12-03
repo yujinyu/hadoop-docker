@@ -6,14 +6,13 @@ RUN apt-get update && \
     autoconf automake libtool cmake zlib1g-dev pkg-config \
 	openjdk-8-jdk libssl-dev scala maven
 
-ENV JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
-ENV PATH=${PATH}:${JAVA_HOME}/bin
-
 # install protobuf 2.5.0
 COPY Configs/protobuf-2.5.0.tar.gz /
 RUN tar -xvf protobuf-2.5.0.tar.gz && cd protobuf-2.5.0/ \
 	&& ./autogen.sh && ./configure && make && make install
-ENV LD_LIBRARY_PATH=/usr/local/lib:${LD_LIBRARY_PATH} HADOOP_HOME=/usr/local/hadoop
+
+ENV JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64 HADOOP_HOME=/usr/local/hadoop
+ENV PATH=${PATH}:${JAVA_HOME}/bin LD_LIBRARY_PATH=${HADOOP_HOME}/lib/native:/usr/local/lib:${LD_LIBRARY_PATH}
 
 # install and configure hadoop
 COPY Configs/hadoop-3.1.2-src.tar.gz /
@@ -57,11 +56,10 @@ ENV PATH=${PATH}:${JAVA_HOME}/bin:${HADOOP_HOME}/bin LD_LIBRARY_PATH=${LD_LIBRAR
 RUN echo "export JAVA_HOME=${JAVA_HOME}\nexport HADOOP_HOME=${HADOOP_HOME}\nexport HADOOP_CONF_DIR=${HADOOP_CONF_DIR}" >> ${HADOOP_CONF_DIR}/hadoop-env.sh
 
 ADD Configs/bootstrap.sh /etc/bootstrap.sh
-ENV BOOTSTRAP /etc/bootstrap.sh
 RUN chown root:root /etc/bootstrap.sh && \
     chmod 700 /etc/bootstrap.sh && \
     chmod +x ${HADOOP_CONF_DIR}/*-env.sh
-
+ENV BOOTSTRAP /etc/bootstrap.sh
 CMD ["/etc/bootstrap.sh", "-d"]
 
 # yarn port
