@@ -36,6 +36,7 @@ RUN apt-get update && \
     apt-get install -y openjdk-8-jdk && \
     #apt-get install -y openssh-server openssh-client openjdk-8-jdk && \
     apt-get autoremove -y && \
+    apt-get autoclean && \
     apt-get clean all
 # configure ssh --> passwordless ssh
 #ADD Configs/ssh_config /root/.ssh/config
