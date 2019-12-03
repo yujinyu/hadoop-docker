@@ -34,21 +34,9 @@ RUN useradd -ms /bin/bash hadoop && \
 
 RUN apt-get update && \
     apt-get install -y openjdk-8-jdk && \
-    #apt-get install -y openssh-server openssh-client openjdk-8-jdk && \
     apt-get autoremove -y && \
     apt-get autoclean && \
     apt-get clean all
-# configure ssh --> passwordless ssh
-#ADD Configs/ssh_config /root/.ssh/config
-#RUN rm -f /etc/ssh/ssh_host_dsa_key /etc/ssh/ssh_host_rsa_key /root/.ssh/id_rsa && \
-#    ssh-keygen -q -N "" -t dsa -f /etc/ssh/ssh_host_dsa_key && \
-#    ssh-keygen -q -N "" -t rsa -f /etc/ssh/ssh_host_rsa_key && \
-#    ssh-keygen -q -N "" -t rsa -f /root/.ssh/id_rsa && \
-#    cp /root/.ssh/id_rsa.pub /root/.ssh/authorized_keys && \
-#    chmod 600 /root/.ssh/config && \
-#    chown root:root /root/.ssh/config && \
-#    sed  -i "/^[^#]*UsePAM/ s/.*/#&/"  /etc/ssh/sshd_config && \
-#    echo "UsePAM no" >> /etc/ssh/sshd_config
 
 ENV HADOOP_HOME=/usr/local/hadoop JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
 ENV PATH=${PATH}:${JAVA_HOME}/bin:${HADOOP_HOME}/bin LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${HADOOP_HOME}/lib/native:/usr/local/lib HADOOP_CONF_DIR=${HADOOP_HOME}/etc/hadoop HADOOP_COMMON_HOME=${HADOOP_HOME} HADOOP_HDFS_HOME=${HADOOP_HOME} HADOOP_MAPRED_HOME=${HADOOP_HOME} HADOOP_YARN_HOME=${HADOOP_HOME}
@@ -63,9 +51,6 @@ RUN chown root:root /etc/bootstrap.sh && \
 #ENV BOOTSTRAP /etc/bootstrap.sh
 CMD ["/etc/bootstrap.sh", "-d"]
 
-# ssh port
-#-00
-EXPOSE 22
 # yarn port
 #-01
 EXPOSE 8030 8031 8032
