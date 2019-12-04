@@ -2,6 +2,7 @@ FROM ubuntu:18.04 as dev-env
 
 # install development tools
 COPY Configs/sources.list /etc/apt/sources.list
+COPY Configs/settings.xml /root/.m2/settings.xml
 RUN apt-get update
 RUN apt-get install -y apt-utils wget tar build-essential \
     autoconf automake libtool cmake zlib1g-dev pkg-config \
