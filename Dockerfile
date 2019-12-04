@@ -14,7 +14,7 @@ RUN cd protobuf-2.5.0/ && ./autogen.sh && ./configure
 RUN cd protobuf-2.5.0/ && make && make install
 
 ENV JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
-ENV HADOOP_HOME=/usr/local/hadoop
+ENV HADOOP_HOME=/opt/hadoop
 ENV PATH=${PATH}:${JAVA_HOME}/bin
 ENV LD_LIBRARY_PATH=${HADOOP_HOME}/lib/native:/usr/local/lib:${LD_LIBRARY_PATH}
 ENV HADOOP_CONF_DIR=${HADOOP_HOME}/etc/hadoop
@@ -30,7 +30,7 @@ ADD Configs/yarn-site.xml ${HADOOP_CONF_DIR}/yarn-site.xml
 
 FROM ubuntu:18.04
 
-COPY --from=dev-env /usr/local/hadoop /usr/local/hadoop
+COPY --from=dev-env /opt/hadoop /opt/hadoop
 #ADD Configs/sources.list /etc/apt/sources.list
 RUN useradd -ms /bin/bash hadoop && \
     useradd -ms /bin/bash yarn && \
@@ -41,7 +41,7 @@ RUN useradd -ms /bin/bash hadoop && \
     apt-get autoclean && \
     apt-get clean all
 
-ENV HADOOP_HOME=/usr/local/hadoop JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
+ENV HADOOP_HOME=/opt/hadoop JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
 ENV HADOOP_CONF_DIR=${HADOOP_HOME}/etc/hadoop HADOOP_COMMON_HOME=${HADOOP_HOME} \
     HADOOP_HDFS_HOME=${HADOOP_HOME} HADOOP_MAPRED_HOME=${HADOOP_HOME} HADOOP_YARN_HOME=${HADOOP_HOME} \
     LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${HADOOP_HOME}/lib/native:/usr/local/lib \
