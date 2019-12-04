@@ -1,8 +1,8 @@
 FROM ubuntu:18.04 as dev-env
 
 # install development tools
-ADD Configs/sources.list /etc/apt/sources.list
-ADD Configs/settings.xml /root/.m2/settings.xml
+#ADD Configs/sources.list /etc/apt/sources.list
+#ADD Configs/settings.xml /root/.m2/settings.xml
 RUN apt-get update
 RUN apt-get install -y apt-utils wget tar build-essential \
     autoconf automake libtool cmake zlib1g-dev pkg-config \
@@ -31,7 +31,7 @@ ADD Configs/yarn-site.xml ${HADOOP_CONF_DIR}/yarn-site.xml
 FROM ubuntu:18.04
 
 COPY --from=dev-env /usr/local/hadoop /usr/local/hadoop
-ADD Configs/sources.list /etc/apt/sources.list
+#ADD Configs/sources.list /etc/apt/sources.list
 RUN useradd -ms /bin/bash hadoop && \
     useradd -ms /bin/bash yarn && \
     useradd -ms /bin/bash hdfs && \
