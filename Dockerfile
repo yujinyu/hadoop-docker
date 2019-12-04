@@ -42,10 +42,14 @@ RUN useradd -ms /bin/bash hadoop && \
     apt-get clean all
 
 ENV HADOOP_HOME=/usr/local/hadoop JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
-ENV HADOOP_CONF_DIR=${HADOOP_HOME}/etc/hadoop HADOOP_COMMON_HOME=${HADOOP_HOME} HADOOP_HDFS_HOME=${HADOOP_HOME} HADOOP_MAPRED_HOME=${HADOOP_HOME} HADOOP_YARN_HOME=${HADOOP_HOME} LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${HADOOP_HOME}/lib/native:/usr/local/lib PATH=${PATH}:${JAVA_HOME}/bin:${HADOOP_HOME}/bin
+ENV HADOOP_CONF_DIR=${HADOOP_HOME}/etc/hadoop HADOOP_COMMON_HOME=${HADOOP_HOME} \
+    HADOOP_HDFS_HOME=${HADOOP_HOME} HADOOP_MAPRED_HOME=${HADOOP_HOME} HADOOP_YARN_HOME=${HADOOP_HOME} \
+    LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${HADOOP_HOME}/lib/native:/usr/local/lib \
+    PATH=${PATH}:${JAVA_HOME}/bin:${HADOOP_HOME}/bin
 
 # JAVA_HOME should be same to the version which has been installed above.
-RUN echo "export JAVA_HOME=${JAVA_HOME}\nexport HADOOP_HOME=${HADOOP_HOME}\nexport HADOOP_CONF_DIR=${HADOOP_CONF_DIR}" >> ${HADOOP_CONF_DIR}/hadoop-env.sh
+RUN echo "export JAVA_HOME=${JAVA_HOME}\nexport HADOOP_HOME=${HADOOP_HOME}\nexport HADOOP_CONF_DIR=${HADOOP_CONF_DIR}" >> \
+    ${HADOOP_CONF_DIR}/hadoop-env.sh
 
 ADD Configs/bootstrap.sh /etc/bootstrap.sh
 RUN chown root:root /etc/bootstrap.sh && \
