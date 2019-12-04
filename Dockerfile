@@ -41,9 +41,13 @@ RUN useradd -ms /bin/bash hadoop && \
     apt-get autoclean && \
     apt-get clean all
 
-ENV HADOOP_HOME=/opt/hadoop JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
-ENV HADOOP_CONF_DIR=${HADOOP_HOME}/etc/hadoop HADOOP_COMMON_HOME=${HADOOP_HOME} \
-    HADOOP_HDFS_HOME=${HADOOP_HOME} HADOOP_MAPRED_HOME=${HADOOP_HOME} HADOOP_YARN_HOME=${HADOOP_HOME} \
+ENV HADOOP_HOME=/opt/hadoop \
+    JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
+ENV HADOOP_CONF_DIR=${HADOOP_HOME}/etc/hadoop \
+    HADOOP_COMMON_HOME=${HADOOP_HOME} \
+    HADOOP_HDFS_HOME=${HADOOP_HOME} \
+    HADOOP_MAPRED_HOME=${HADOOP_HOME} \
+    HADOOP_YARN_HOME=${HADOOP_HOME} \
     LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${HADOOP_HOME}/lib/native:/usr/local/lib \
     PATH=${PATH}:${JAVA_HOME}/bin:${HADOOP_HOME}/bin
 
