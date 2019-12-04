@@ -13,7 +13,6 @@ cd ${HADOOP_HOME}/share/hadoop/common ; for cp in ${ACP//,/ }; do  echo == $cp; 
 sed s/HOSTNAME/$HOSTNAME/ ${HADOOP_HOME}/etc/hadoop/core-site.xml.temple > \
  ${HADOOP_HOME}/etc/hadoop/core-site.xml
 
-service ssh start
 ${HADOOP_HOME}/bin/hdfs namenode -format
 ${HADOOP_HOME}/sbin/start-dfs.sh
 ${HADOOP_HOME}/sbin/start-yarn.sh
